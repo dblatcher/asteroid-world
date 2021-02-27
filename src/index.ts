@@ -35,6 +35,7 @@ keyWatcher.on('keydown', (event: KeyboardEvent) => {
         if (code == 'ArrowRight') { myShip.data.heading -= .2 }
         if (code == 'ArrowUp') { myShip.changeThrottle(20) }
         if (code == 'ArrowDown') { myShip.changeThrottle(-20) }
+        if (code == 'Space') { myShip.shoot() }
     }
 
     if (code == 'KeyP') {

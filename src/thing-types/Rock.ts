@@ -30,6 +30,10 @@ class Rock extends Thing {
         RenderFunctions.renderPolygon.onCanvas(ctx, this.jaggedEdgePoints, { strokeColor: this.data.color, fillColor: this.data.fillColor })
     }
 
+    move() {
+        Thing.prototype.move.apply(this,[])
+        this.data.heading +=.025
+    }
 
     static makeJaggedEdgeShape(config: ThingData): Force[] {
         const numberOfCorners = 8 + Math.floor(Math.random() * 4)

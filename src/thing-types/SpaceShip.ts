@@ -1,4 +1,5 @@
-import { Thing, Force, ThingData, Shape, Geometry, RenderFunctions } from '../../../worlds/src/index'
+import { Thing, Force, ThingData, Shape, Geometry, RenderFunctions } from '../_fake-module'
+import { Bullet } from './Bullet'
 
 const { getVectorX, getVectorY, reverseHeading } = Geometry
 
@@ -28,7 +29,7 @@ class SpaceShip extends Thing {
         this.data.maxThrust = config.maxThrust || 100
     }
 
-    get typeId() {return 'SpaceShip'}
+    get typeId() { return 'SpaceShip' }
 
     renderOnCanvas(ctx: CanvasRenderingContext2D) {
 
@@ -65,7 +66,7 @@ class SpaceShip extends Thing {
                 y: backPoint.y + getVectorY(size * (thrust / maxThrust) * 2, reverseHeading(heading + flicker))
             }
 
-            RenderFunctions.renderPolygon.onCanvas(ctx, [backRightPoint, flameEndPoint, backLeftPoint], { strokeColor: 'blue', fillColor:'green' })
+            RenderFunctions.renderPolygon.onCanvas(ctx, [backRightPoint, flameEndPoint, backLeftPoint], { strokeColor: 'blue', fillColor: 'green' })
         }
     }
 
@@ -81,6 +82,20 @@ class SpaceShip extends Thing {
         const { thrust, heading } = this.data
         const thrustForce = new Force(thrust / this.mass, heading)
         this.momentum = Force.combine([this.momentum, thrustForce])
+    }
+
+    shoot() {
+
+        const bullet = new Bullet({
+            x: this.data.x + getVectorX(this.data.size+5, this.data.heading),
+            y: this.data.y + getVectorY(this.data.size+5, this.data.heading),
+            color: 'red',
+            fillColor: 'red',
+            ticksRemaining: 100
+        }, new Force(10, this.data.heading))
+
+        bullet.enterWorld(this.world)
+
     }
 
 }
