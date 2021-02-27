@@ -1,4 +1,4 @@
-import { Thing, Force, ThingData, Shape, Geometry, RenderFunctions } from '../_fake-module'
+import { Thing, Force, ThingData, Shape, Geometry, RenderFunctions, CollisionDetection } from '../_fake-module'
 import { Bullet } from './Bullet'
 
 const { getVectorX, getVectorY, reverseHeading } = Geometry
@@ -84,7 +84,20 @@ class SpaceShip extends Thing {
         this.momentum = Force.combine([this.momentum, thrustForce])
     }
 
+    handleCollision(report: CollisionDetection.CollisionReport) {
+        Thing.prototype.handleCollision(report)
+
+        if (report) {
+            const otherThing = report.item1 === this ? report.item2 : report.item1
+            if (otherThing.typeId === 'Rock') {
+                this.leaveWorld()
+            }
+        }
+    }
+
     shoot() {
+
+        if (!this.world) {return}
 
         const bullet = new Bullet({
             x: this.data.x + getVectorX(this.data.size+5, this.data.heading),

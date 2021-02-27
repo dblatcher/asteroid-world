@@ -64,6 +64,9 @@ class Rock extends Thing {
                 this.shatter()
                 otherThing.leaveWorld()
             }
+            if (otherThing.typeId === 'SpaceShip') {
+                otherThing.leaveWorld()
+            }
         }
     }
 
