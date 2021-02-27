@@ -1,5 +1,5 @@
-import {World} from '../../worlds/src/index'
-
+import { World, Force } from './_fake-module'
+import { makeRock, makeShip } from './thingFactories'
 
 const worldHeight = 500
 const worldWidth = 500
@@ -12,7 +12,20 @@ const gameWorld = new World([
     height: worldHeight,
     thingsExertGravity: false,
     hasHardEdges: true,
-    name: "Galaxy",
+    name: "gameWorld",
 });
 
-export {gameWorld}
+const rocks = [
+    makeRock(100, 100, 20),
+    makeRock(160, 400, 30, new Force(1, 3.2)),
+    makeRock(100, 150, 15, new Force(1, 1)),
+]
+
+rocks.forEach(rock => {
+    rock.enterWorld(gameWorld)
+})
+
+const myShip = makeShip(250, 250, 'red')
+myShip.enterWorld(gameWorld)
+
+export { gameWorld, myShip }
