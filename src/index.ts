@@ -1,4 +1,4 @@
-import { gameWorld, myShip } from './worldSetup'
+import { gameWorld, resetGameWorld } from './worldSetup'
 import KeyWatcher from './KeyWatcher'
 import './style.css';
 
@@ -8,6 +8,14 @@ const gameSpeed = 50
 
 gameWorld.setCanvas(gameCanvas)
 gameWorld.ticksPerSecond = gameSpeed
+
+let myShip = resetGameWorld()
+
+function reset() {
+    myShip = resetGameWorld()
+}
+
+
 
 const keyWatcher = new KeyWatcher(document.body)
 
@@ -28,5 +36,8 @@ keyWatcher.on('keydown', (event: KeyboardEvent) => {
     }
     if (code == 'KeyP') {
         gameWorld.ticksPerSecond = gameWorld.ticksPerSecond ? 0 : gameSpeed
+    }
+    if (code == 'KeyR') {
+        reset()
     }
 })
