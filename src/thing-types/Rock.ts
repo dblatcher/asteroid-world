@@ -1,4 +1,4 @@
-import { Thing, Force, Geometry, ThingData, RenderFunctions } from '../_fake-module'
+import { Thing, Force, Geometry, ThingData, RenderFunctions, CollisionDetection } from '../_fake-module'
 
 
 
@@ -31,8 +31,40 @@ class Rock extends Thing {
     }
 
     move() {
-        Thing.prototype.move.apply(this,[])
-        this.data.heading +=.025
+        Thing.prototype.move.apply(this, [])
+        this.data.heading += .025
+    }
+
+    shatter() {
+        if (this.data.size > 10) {
+            const splitDirection = Math.random() * 2 * Math.PI
+            makeFragment(this.data, splitDirection).enterWorld(this.world)
+            makeFragment(this.data, -splitDirection).enterWorld(this.world)
+        }
+
+        this.leaveWorld()
+
+        function makeFragment(data: ThingData, splitDirection: number): Rock {
+            const newRockConfig = Object.assign({}, data, { 
+                size: data.size / 2,
+                x: data.x + Geometry.getVectorX(data.size/2, splitDirection),
+                y: data.y + Geometry.getVectorY(data.size/2, splitDirection),
+            })
+
+            return new Rock(newRockConfig, new Force(5, splitDirection))
+        }
+    }
+
+    handleCollision(report: CollisionDetection.CollisionReport) {
+        Thing.prototype.handleCollision(report)
+
+        if (report) {
+            const otherThing = report.item1 === this ? report.item2 : report.item1
+            if (otherThing.typeId === 'Bullet') {
+                this.shatter()
+                otherThing.leaveWorld()
+            }
+        }
     }
 
     static makeJaggedEdgeShape(config: ThingData): Force[] {
@@ -43,8 +75,8 @@ class Rock extends Thing {
 
         for (i = 0; i < numberOfCorners; i++) {
             angleVariance = (Math.random() - .5)
-            radiusVariance = (Math.random() * config.size)/10
-            corners.push(new Force(config.size -radiusVariance, (cornerSegment * i) + angleVariance))
+            radiusVariance = (Math.random() * config.size) / 10
+            corners.push(new Force(config.size - radiusVariance, (cornerSegment * i) + angleVariance))
         }
         return corners
     }

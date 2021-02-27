@@ -1,4 +1,5 @@
 import { Thing, Force, ThingData, Shape, Geometry, RenderFunctions, CollisionDetection } from '../../../worlds/src/index'
+import { Rock } from './Rock'
 
 class BulletData implements ThingData {
     x: number
@@ -32,12 +33,10 @@ class Bullet extends Thing {
 
         if (report) {
             const otherThing = report.item1 === this ? report.item2 : report.item1
-
             if (otherThing.typeId === 'Rock') {
-                otherThing.leaveWorld()
+                (otherThing as Rock).shatter()
                 this.leaveWorld()
             }
-
         }
     }
 

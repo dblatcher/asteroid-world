@@ -19,8 +19,8 @@ function makeShip(x: number, y: number, color: string): SpaceShip {
         x, y, color,
         size: 10,
         density: 1,
-        elasticity: 1,
-        maxThrust: 200,
+        elasticity: .7,
+        maxThrust: 100,
     })
 }
 
