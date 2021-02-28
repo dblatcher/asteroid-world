@@ -13,8 +13,7 @@ function watchKeys(game: AsteroidsGame) {
         if (game.world.ticksPerSecond) {
             if (keyCodes.includes('ArrowLeft')) { game.player.data.heading += .1 }
             if (keyCodes.includes('ArrowRight')) { game.player.data.heading -= .1 }
-            if (keyCodes.includes('ArrowUp')) { game.player.changeThrottle(5) }
-            if (keyCodes.includes('ArrowDown')) { game.player.changeThrottle(-5) }
+            if (keyCodes.includes('ArrowUp')) { game.player.changeThrottle(2) } else {game.player.changeThrottle(-5)}
         }
     })
 

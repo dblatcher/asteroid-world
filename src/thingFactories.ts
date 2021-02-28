@@ -20,7 +20,7 @@ function makeShip(x: number, y: number, color: string): SpaceShip {
         size: 10,
         density: 1,
         elasticity: .7,
-        maxThrust: 100,
+        maxThrust: 200,
     })
 }
 
