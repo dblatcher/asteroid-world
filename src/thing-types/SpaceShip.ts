@@ -31,6 +31,10 @@ class SpaceShip extends Thing {
 
     get typeId() { return 'SpaceShip' }
 
+    duplicate() {
+        return new SpaceShip(Object.assign({}, this.data), new Force(this.momentum.magnitude, this.momentum.direction))
+    }
+
     renderOnCanvas(ctx: CanvasRenderingContext2D) {
 
         const { x, y, size, heading, color, fillColor, thrust, maxThrust } = this.data
@@ -91,6 +95,7 @@ class SpaceShip extends Thing {
             const otherThing = report.item1 === this ? report.item2 : report.item1
             if (otherThing.typeId === 'Rock') {
                 this.leaveWorld()
+                this.world.emitter.emit('shipDeath', this)
             }
         }
     }

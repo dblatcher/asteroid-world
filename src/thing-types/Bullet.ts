@@ -36,6 +36,7 @@ class Bullet extends Thing {
             if (otherThing.typeId === 'Rock') {
                 (otherThing as Rock).shatter()
                 this.leaveWorld()
+                this.world.emitter.emit('rockHit', otherThing)
             }
         }
     }

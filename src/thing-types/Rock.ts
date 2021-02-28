@@ -63,9 +63,11 @@ class Rock extends Thing {
             if (otherThing.typeId === 'Bullet') {
                 this.shatter()
                 otherThing.leaveWorld()
+                this.world.emitter.emit('rockHit', this)
             }
             if (otherThing.typeId === 'SpaceShip') {
                 otherThing.leaveWorld()
+                this.world.emitter.emit('shipDeath', otherThing)
             }
         }
     }
