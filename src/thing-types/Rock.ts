@@ -1,4 +1,4 @@
-import { Thing, Force, Geometry, ThingData, RenderFunctions, CollisionDetection } from '../_fake-module'
+import { Thing, Force, Geometry, ThingData, RenderFunctions, CollisionDetection, ViewPort } from '../_fake-module'
 
 
 
@@ -26,8 +26,8 @@ class Rock extends Thing {
         return new Rock(Object.assign({}, this.data), new Force(this.momentum.magnitude, this.momentum.direction))
     }
 
-    renderOnCanvas(ctx: CanvasRenderingContext2D) {
-        RenderFunctions.renderPolygon.onCanvas(ctx, this.jaggedEdgePoints, { strokeColor: this.data.color, fillColor: this.data.fillColor })
+    renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort:ViewPort) {
+        RenderFunctions.renderPolygon.onCanvas(ctx, this.jaggedEdgePoints, { strokeColor: this.data.color, fillColor: this.data.fillColor }, viewPort)
     }
 
     move() {

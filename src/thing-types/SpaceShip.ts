@@ -1,4 +1,4 @@
-import { Thing, Force, ThingData, Shape, Geometry, RenderFunctions, CollisionDetection } from '../_fake-module'
+import { Thing, Force, ThingData, Shape, Geometry, RenderFunctions, CollisionDetection, ViewPort } from '../_fake-module'
 import { Bullet } from './Bullet'
 
 const { getVectorX, getVectorY, reverseHeading } = Geometry
@@ -35,7 +35,7 @@ class SpaceShip extends Thing {
         return new SpaceShip(Object.assign({}, this.data), new Force(this.momentum.magnitude, this.momentum.direction))
     }
 
-    renderOnCanvas(ctx: CanvasRenderingContext2D) {
+    renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort:ViewPort) {
 
         const { x, y, size, heading, color, fillColor, thrust, maxThrust } = this.data
 
@@ -55,7 +55,7 @@ class SpaceShip extends Thing {
             y: y + getVectorY(size, heading + backSideAngle)
         }
 
-        RenderFunctions.renderPolygon.onCanvas(ctx, [frontPoint, backLeftPoint, backRightPoint], { strokeColor: color, fillColor })
+        RenderFunctions.renderPolygon.onCanvas(ctx, [frontPoint, backLeftPoint, backRightPoint], { strokeColor: color, fillColor }, viewPort)
 
 
         if (thrust > 0) {
@@ -70,7 +70,7 @@ class SpaceShip extends Thing {
                 y: backPoint.y + getVectorY(size * (thrust / maxThrust) * 2, reverseHeading(heading + flicker))
             }
 
-            RenderFunctions.renderPolygon.onCanvas(ctx, [backRightPoint, flameEndPoint, backLeftPoint], { strokeColor: 'blue', fillColor: 'green' })
+            RenderFunctions.renderPolygon.onCanvas(ctx, [backRightPoint, flameEndPoint, backLeftPoint], { strokeColor: 'blue', fillColor: 'green' }, viewPort)
         }
     }
 

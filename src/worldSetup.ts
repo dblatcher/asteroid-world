@@ -28,7 +28,14 @@ const levels = [
         makeRock(10, 100, 40, new Force(1, 4.2)),
         makeRock(100, 150, 15, new Force(1, 1)),
         makeShip(250, 250, 'blue')
-    ]
+    ],
+    [
+        makeRock(100, 100, 80, new Force(1, 6)),
+        makeRock(160, 400, 30, new Force(1, 1.2)),
+        makeRock(10, 200, 40, new Force(1, 4.2)),
+        makeRock(100, 150, 15, new Force(1, 1)),
+        makeShip(250, 250, 'red')
+    ],
 ]
 
 

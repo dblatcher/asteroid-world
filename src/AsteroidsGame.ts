@@ -13,7 +13,7 @@ function watchKeys(game: AsteroidsGame) {
         if (game.world.ticksPerSecond) {
             if (keyCodes.includes('ArrowLeft')) { game.player.data.heading += .1 }
             if (keyCodes.includes('ArrowRight')) { game.player.data.heading -= .1 }
-            if (keyCodes.includes('ArrowUp')) { game.player.changeThrottle(2) } else {game.player.changeThrottle(-5)}
+            if (keyCodes.includes('ArrowUp')) { game.player.changeThrottle(game.player.data.maxThrust * .02) } else { game.player.changeThrottle(-game.player.data.maxThrust * .1) }
         }
     })
 
@@ -54,7 +54,7 @@ class AsteroidsGame {
         this.handleRockHit = this.handleRockHit.bind(this)
         this.handleShipDeath = this.handleShipDeath.bind(this)
 
-        this.world.setCanvas(gameCanvas)
+        this.world.viewPort.setCanvas(gameCanvas)
         this.world.ticksPerSecond = gameSpeed
         this.world.emitter.on('shipDeath', this.handleShipDeath)
         this.world.emitter.on('rockHit', this.handleRockHit)
