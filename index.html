@@ -9,16 +9,28 @@
 <body>
 
 
-  <div class="info">
-    <p>level:<span id="level"></span></p>
-    <p>score:<span id="score"></span></p>
-    <p>lives:<span id="lives"></span></p>
-  </div>
-  <div class="frame">
-    <canvas id="gameCanvas"></canvas>
-    <canvas id="miniMap"></canvas>
-  </div>
+  <main class="hidden">
+    <div class="frame">
+      <canvas id="gameCanvas"></canvas>
+      <canvas id="miniMap"></canvas>
+    </div>
 
+    <div class="info">
+      <table>
+        <tbody>
+          <tr>
+            <th>level</th><td><span id="level"></td>
+          </tr>
+          <tr>
+            <th>score</th><td><span id="score"></td>
+          </tr>
+          <tr>
+            <th>lives</th><td><span id="lives"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
 
 
   <script src="dist/bundle.js"></script>

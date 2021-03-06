@@ -24,7 +24,7 @@ function watchKeys(game: AsteroidsGame) {
             if (code == 'Space') { game.player.shoot() }
         }
         if (code == 'KeyP') {
-            game.world.ticksPerSecond = game.world.ticksPerSecond ? 0 : game.gameSpeed
+            game.togglePause()
         }
         if (code == 'KeyR') {
             game.resetGame()
@@ -43,60 +43,117 @@ class AsteroidsGame {
     player: SpaceShip
     gameSpeed: number
     levels: Thing[][]
+    elements: {
+        main: HTMLElement
+        score: HTMLElement
+        lives: HTMLElement
+        level: HTMLElement
+        message: HTMLElement
+    }
 
     constructor(world: World, levels: Thing[][], gameSpeed: number, gameCanvas: HTMLCanvasElement, miniMapCanvas: HTMLCanvasElement,) {
         this.world = world
         this.gameSpeed = gameSpeed
         this.levels = levels
         this.score = 0
-        this.lives = 3
+        this.lives = -1
         this.level = 0
 
         this.resetGame = this.resetGame.bind(this)
+        this.createMessageElement = this.createMessageElement.bind(this)
         this.resetLevel = this.resetLevel.bind(this)
         this.handleRockHit = this.handleRockHit.bind(this)
         this.handleShipDeath = this.handleShipDeath.bind(this)
 
-        this.world.ticksPerSecond = gameSpeed
+        //this.world.ticksPerSecond = gameSpeed
         this.world.emitter.on('shipDeath', this.handleShipDeath)
         this.world.emitter.on('rockHit', this.handleRockHit)
 
-        this.mainScreen = ViewPort.full(world, gameCanvas)
-        this.miniMap = miniMapCanvas ? new ViewPort({
-            world,
-            height:100,
-            width:100,
-            x:world.width/2,
-            y:world.height/2,
-            magnify: Math.min(100/world.width, 100/world.height),
-            canvas:miniMapCanvas
-        }) :null
+        this.mainScreen = ViewPort.full(world, gameCanvas, 1.2)
+        this.miniMap = miniMapCanvas
+            ? ViewPort.fitToSize(world, miniMapCanvas, 150, 200)
+            : null
+
+        this.elements = {
+            main: document.querySelector('main'),
+            score: document.getElementById('score'),
+            lives: document.getElementById('lives'),
+            level: document.getElementById('level'),
+            message: null,
+        }
+
+        this.createMessageElement(['hello and welcome to', 'asteroid world'], true)
 
         watchKeys(this)
         this.resetLevel(0)
         this.updateInfo()
+
+        this.elements.main.classList.remove('hidden')
     }
 
     updateInfo() {
-        const scoreElement = document.getElementById('score')
-        if (scoreElement) { scoreElement.innerText = this.score.toString() }
-        const livesElement = document.getElementById('lives')
-        if (livesElement) { livesElement.innerText = this.lives.toString() }
-        const levelElement = document.getElementById('level')
-        if (levelElement) { levelElement.innerText = this.level.toString() }
+        const { score, lives, level } = this.elements
+        if (score) { score.innerText = this.score.toString() }
+        if (lives) { lives.innerText = this.lives.toString() }
+        if (level) { level.innerText = this.level.toString() }
+    }
+
+    togglePause() {
+
+        if (this.lives < 0 ) {return}
+
+        if (this.world.ticksPerSecond) {
+            this.createMessageElement(['paused'])
+            this.world.ticksPerSecond =  0 
+        } else {
+            this.removeMessageElement()
+            this.world.ticksPerSecond = this.gameSpeed 
+        }
     }
 
     resetGame() {
+        this.removeMessageElement()
+        this.world.ticksPerSecond = this.gameSpeed
         this.score = 0
         this.lives = 3
         this.resetLevel(0)
         this.updateInfo()
     }
 
+    createMessageElement(text: string[], includeResetButton: boolean = false) {
+
+        if (this.elements.message) { this.removeMessageElement() }
+
+        const message = document.createElement('article')
+        message.classList.add("message")
+
+        function addParagraph(textLine: string) {
+            const pargraph = document.createElement('p')
+            pargraph.innerText = textLine
+            message.appendChild(pargraph)
+        }
+        text.forEach(line => addParagraph(line))
+
+        if (includeResetButton) {
+            const resetButton = document.createElement('button')
+            resetButton.innerText = 'new game'
+            resetButton.addEventListener('click', this.resetGame)
+            message.appendChild(resetButton)
+        }
+
+        this.elements.message = message
+        this.elements.main.appendChild(message)
+        return message
+    }
+
+    removeMessageElement() {
+        if (!this.elements.message) { return }
+        this.elements.main.removeChild(this.elements.message)
+        this.elements.message = null
+    }
 
     resetLevel(level: number) {
         this.world.things.splice(0, this.world.things.length)
-
 
         this.levels[level].forEach(thing => {
             thing.duplicate().enterWorld(this.world)
@@ -130,10 +187,14 @@ class AsteroidsGame {
             this.lives--
 
             if (this.lives >= 0) {
-                this.resetLevel(this.level)
-                this.updateInfo()
+                setTimeout(() => {
+                    this.resetLevel(this.level)
+                    this.updateInfo()
+                }, 1500)
             } else {
-                setTimeout(this.resetGame, 2000)
+                setTimeout(() => { 
+                    this.createMessageElement(['GAME OVER'],true) 
+                }, 1500)
             }
         }
     }
