@@ -2,6 +2,7 @@ import { World, Thing } from "./_fake-module"
 import { SpaceShip } from './thing-types/SpaceShip';
 import { Rock } from './thing-types/Rock';
 import KeyWatcher from './KeyWatcher'
+import { ViewPort } from "../../worlds/src";
 
 
 
@@ -37,11 +38,13 @@ class AsteroidsGame {
     lives: number
     level: number
     world: World
+    mainScreen: ViewPort
+    miniMap?: ViewPort
     player: SpaceShip
     gameSpeed: number
     levels: Thing[][]
 
-    constructor(world: World, levels: Thing[][], gameCanvas: HTMLCanvasElement, gameSpeed: number) {
+    constructor(world: World, levels: Thing[][], gameSpeed: number, gameCanvas: HTMLCanvasElement, miniMapCanvas: HTMLCanvasElement,) {
         this.world = world
         this.gameSpeed = gameSpeed
         this.levels = levels
@@ -54,10 +57,20 @@ class AsteroidsGame {
         this.handleRockHit = this.handleRockHit.bind(this)
         this.handleShipDeath = this.handleShipDeath.bind(this)
 
-        this.world.viewPort.setCanvas(gameCanvas)
         this.world.ticksPerSecond = gameSpeed
         this.world.emitter.on('shipDeath', this.handleShipDeath)
         this.world.emitter.on('rockHit', this.handleRockHit)
+
+        this.mainScreen = ViewPort.full(world, gameCanvas)
+        this.miniMap = miniMapCanvas ? new ViewPort({
+            world,
+            height:100,
+            width:100,
+            x:world.width/2,
+            y:world.height/2,
+            magnify: Math.min(100/world.width, 100/world.height),
+            canvas:miniMapCanvas
+        }) :null
 
         watchKeys(this)
         this.resetLevel(0)
