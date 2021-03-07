@@ -34,7 +34,7 @@ class Bullet extends Thing {
         if (report) {
             const otherThing = report.item1 === this ? report.item2 : report.item1
             if (otherThing.typeId === 'Rock') {
-                (otherThing as Rock).shatter()
+                (otherThing as Rock).shatter(report)
                 this.leaveWorld()
                 this.world.emitter.emit('rockHit', otherThing)
             }

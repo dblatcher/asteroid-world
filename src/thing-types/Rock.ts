@@ -1,4 +1,5 @@
-import { Thing, Force, Geometry, ThingData, RenderFunctions, CollisionDetection, ViewPort } from '../_fake-module'
+import {   } from '../../../worlds/src/Effect'
+import { Thing, Force, Geometry, ThingData, RenderFunctions, CollisionDetection, ViewPort,ExpandingRing } from '../_fake-module'
 
 
 
@@ -26,7 +27,7 @@ class Rock extends Thing {
         return new Rock(Object.assign({}, this.data), new Force(this.momentum.magnitude, this.momentum.direction))
     }
 
-    renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort:ViewPort) {
+    renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort: ViewPort) {
         RenderFunctions.renderPolygon.onCanvas(ctx, this.jaggedEdgePoints, { strokeColor: this.data.color, fillColor: this.data.fillColor }, viewPort)
     }
 
@@ -35,23 +36,37 @@ class Rock extends Thing {
         this.data.heading += .025
     }
 
-    shatter() {
+    shatter(report: CollisionDetection.CollisionReport = null) {
         if (this.data.size > 10) {
-            const splitDirection = Math.random() * 2 * Math.PI
-            makeFragment(this.data, splitDirection).enterWorld(this.world)
-            makeFragment(this.data, -splitDirection).enterWorld(this.world)
+
+            let impactDirection = Math.random() * 2 * Math.PI
+            if (report) {
+                let otherThing = report.item1 == this ? report.item2 : report.item1
+                impactDirection = otherThing.momentum.direction
+            }
+
+            makeFragment(this.data, impactDirection + Geometry._90deg).enterWorld(this.world)
+            makeFragment(this.data, impactDirection - Geometry._90deg).enterWorld(this.world)
         }
+
+        new ExpandingRing({
+            x: report ? report.impactPoint.x : this.data.x,
+            y: report ? report.impactPoint.y : this.data.y,
+            duration: 20 + Math.floor(this.data.size / 10),
+            size: this.data.size / 2,
+            color: 'white',
+        }).enterWorld(this.world)
 
         this.leaveWorld()
 
         function makeFragment(data: ThingData, splitDirection: number): Rock {
-            const newRockConfig = Object.assign({}, data, { 
+            const newRockConfig = Object.assign({}, data, {
                 size: data.size / 2,
-                x: data.x + Geometry.getVectorX(data.size/2, splitDirection),
-                y: data.y + Geometry.getVectorY(data.size/2, splitDirection),
+                x: data.x + Geometry.getVectorX(data.size / 2, splitDirection),
+                y: data.y + Geometry.getVectorY(data.size / 2, splitDirection),
             })
 
-            return new Rock(newRockConfig, new Force(5, splitDirection))
+            return new Rock(newRockConfig, new Force(3, splitDirection))
         }
     }
 
@@ -61,7 +76,7 @@ class Rock extends Thing {
         if (report) {
             const otherThing = report.item1 === this ? report.item2 : report.item1
             if (otherThing.typeId === 'Bullet') {
-                this.shatter()
+                this.shatter(report)
                 otherThing.leaveWorld()
                 this.world.emitter.emit('rockHit', this)
             }

@@ -1,4 +1,18 @@
-import { Thing, Force, ThingData, Shape, Geometry, RenderFunctions, World, CollisionDetection, WorldConfig, ViewPort } from '../../worlds/src/index'
+import {
+    Thing, World, Force, Shape, Fluid, ViewPort,
+    WorldConfig, ThingData, FluidData,
+    LinedThing,
+    Effect, EffectData, ExpandingRing,
+    Physics, Geometry, CollisionDetection, RenderFunctions,
+    shapes,
+} from '../../worlds/src/index'
 
 
-export {Thing, Force, ThingData, Shape, Geometry, RenderFunctions, World, CollisionDetection, WorldConfig, ViewPort}
+export {
+    Thing, World, Force, Shape, Fluid, ViewPort,
+    WorldConfig, ThingData, FluidData,
+    LinedThing,
+    Effect, EffectData, ExpandingRing,
+    Physics, Geometry, CollisionDetection, RenderFunctions,
+    shapes,
+} 
