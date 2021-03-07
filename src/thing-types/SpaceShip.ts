@@ -1,4 +1,4 @@
-import { Thing, Force, ThingData, Shape, Geometry, RenderFunctions, CollisionDetection, ViewPort } from '../_fake-module'
+import { Thing, Force, ThingData, Shape, Geometry, RenderFunctions, CollisionDetection, ViewPort, ExpandingRing } from '../_fake-module'
 import { Bullet } from './Bullet'
 
 const { getVectorX, getVectorY, reverseHeading } = Geometry
@@ -88,13 +88,41 @@ class SpaceShip extends Thing {
         this.momentum = Force.combine([this.momentum, thrustForce])
     }
 
+    explode() {
+        this.leaveWorld()
+
+        new ExpandingRing({
+            x: this.data.x,
+            y: this.data.y,
+            duration: 50,
+            size: this.data.size * 2,
+            color: this.data.color,
+        }).enterWorld(this.world)
+
+        new ExpandingRing({
+            x: this.data.x,
+            y: this.data.y,
+            duration: 60,
+            size: this.data.size * 3,
+            color: 'white',
+        }).enterWorld(this.world)
+
+        new ExpandingRing({
+            x: this.data.x,
+            y: this.data.y,
+            duration: 70,
+            size: this.data.size * 4,
+            color: this.data.color,
+        }).enterWorld(this.world)
+    }
+
     handleCollision(report: CollisionDetection.CollisionReport) {
         Thing.prototype.handleCollision(report)
 
         if (report) {
             const otherThing = report.item1 === this ? report.item2 : report.item1
             if (otherThing.typeId === 'Rock') {
-                this.leaveWorld()
+                this.explode()
                 this.world.emitter.emit('shipDeath', this)
             }
         }

@@ -1,7 +1,6 @@
 import {   } from '../../../worlds/src/Effect'
 import { Thing, Force, Geometry, ThingData, RenderFunctions, CollisionDetection, ViewPort,ExpandingRing } from '../_fake-module'
-
-
+import { SpaceShip } from './SpaceShip'
 
 class Rock extends Thing {
 
@@ -81,7 +80,7 @@ class Rock extends Thing {
                 this.world.emitter.emit('rockHit', this)
             }
             if (otherThing.typeId === 'SpaceShip') {
-                otherThing.leaveWorld()
+                (otherThing as SpaceShip).explode()
                 this.world.emitter.emit('shipDeath', otherThing)
             }
         }
