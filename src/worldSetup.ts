@@ -1,4 +1,4 @@
-import { World, Force } from './_fake-module'
+import { World, Force, StarField } from '../../worlds/src/index'
 import { makeRock, makeShip } from './thingFactories'
 
 
@@ -13,6 +13,10 @@ const gameWorld = new World([
     thingsExertGravity: false,
     hasHardEdges: true,
     name: "gameWorld",
+    backGrounds: [
+        new StarField({width:worldWidth, height:worldHeight, numberOfStars:50, depth:5}),
+        new StarField({width:worldWidth, height:worldHeight, numberOfStars:100, depth:10}),
+    ]
 });
 
 

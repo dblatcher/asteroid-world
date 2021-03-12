@@ -53,12 +53,18 @@ class AsteroidsGame {
             message: null,
         }
 
-        this.createMessageElement(['hello and welcome to', 'asteroid world'], true)
-
         const keyWatcher = new KeyWatcher(document.body)
         keyWatcher.startReportTimer(1000 / this.gameSpeed)
         keyWatcher.on('report', (keyCodes: string[]) => { this.respondToControls(keyCodes) })
         keyWatcher.on('keydown', (event: KeyboardEvent) => { this.respondToKeyDown(event) })
+
+        this.mainScreen.renderCanvas();
+        if (this.miniMap) {
+            this.miniMap.dontRenderBackground = true
+            this.miniMap.dontRenderEffects = true
+            this.miniMap.renderCanvas();
+        }
+        this.createMessageElement(['hello and welcome to', 'asteroid world'], true)
 
         this.resetLevel(0)
         this.updateInfo()
