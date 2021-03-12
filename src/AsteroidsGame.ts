@@ -1,7 +1,8 @@
-import { World, Thing, ViewPort  } from "../../worlds/src/index"
+import { World, Thing, ViewPort, RenderFunctions  } from "../../worlds/src/index"
 import { SpaceShip } from './thing-types/SpaceShip';
 import { Rock } from './thing-types/Rock';
 import KeyWatcher from './KeyWatcher'
+import { RenderTransformationRule } from "../../worlds/src/ViewPort";
 
 
 class AsteroidsGame {
@@ -62,6 +63,30 @@ class AsteroidsGame {
         if (this.miniMap) {
             this.miniMap.dontRenderBackground = true
             this.miniMap.dontRenderEffects = true
+
+            this.miniMap.transformRules.push(new RenderTransformationRule(
+                thing => thing.typeId === 'SpaceShip' ,
+                (thing, ctx, viewPort) => {
+                    const duplicate = thing.duplicate()
+                    duplicate.data.size = duplicate.data.size *2
+                    duplicate.renderOnCanvas(ctx,viewPort)
+                }
+            ))
+            this.miniMap.transformRules.push(new RenderTransformationRule(
+                thing => thing.typeId === 'Rock' ,
+                (thing, ctx, viewPort) => {
+                    const circle = thing.shapeValues
+                    RenderFunctions.renderCircle.onCanvas(ctx, circle, {fillColor:thing.data.fillColor},viewPort)
+                }
+            ))
+            this.miniMap.transformRules.push(new RenderTransformationRule(
+                thing => thing.typeId === 'Bullet',
+                (thing, ctx, viewPort) => {
+                    const point = thing.shapeValues
+                    RenderFunctions.renderPoint.onCanvas(ctx, point, {fillColor:thing.data.fillColor},viewPort)
+                }
+            ))
+
             this.miniMap.renderCanvas();
         }
         this.createMessageElement(['hello and welcome to', 'asteroid world'], true)
