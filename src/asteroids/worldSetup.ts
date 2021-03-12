@@ -1,4 +1,4 @@
-import { World, Force, StarField } from '../../worlds/src/index'
+import { World, Force, StarField } from '../../../worlds/src/index'
 import { makeRock, makeShip } from './thingFactories'
 
 

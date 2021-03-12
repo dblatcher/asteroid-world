@@ -1,8 +1,8 @@
-import { World, Thing, ViewPort, RenderFunctions  } from "../../worlds/src/index"
-import { SpaceShip } from './thing-types/SpaceShip';
-import { Rock } from './thing-types/Rock';
-import KeyWatcher from './KeyWatcher'
-import { RenderTransformationRule } from "../../worlds/src/ViewPort";
+import { World, Thing, ViewPort, RenderFunctions  } from "../../../worlds/src/index"
+import { SpaceShip } from '../thing-types/SpaceShip';
+import { Rock } from '../thing-types/Rock';
+import KeyWatcher from '../KeyWatcher'
+import { RenderTransformationRule } from "../../../worlds/src/ViewPort";
 
 
 class AsteroidsGame {
