@@ -1,8 +1,7 @@
-import { World, Thing } from "./_fake-module"
+import { World, Thing, ViewPort  } from "../../worlds/src/index"
 import { SpaceShip } from './thing-types/SpaceShip';
 import { Rock } from './thing-types/Rock';
 import KeyWatcher from './KeyWatcher'
-import { ViewPort } from "../../worlds/src";
 
 
 class AsteroidsGame {
