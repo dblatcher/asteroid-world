@@ -1,5 +1,6 @@
 import { Thing, Force, ThingData, Shape, Geometry, RenderFunctions, CollisionDetection, ViewPort, ExpandingRing } from '../_fake-module'
 import { Bullet } from './Bullet'
+import { DustCloud } from './DustCloud'
 
 const { getVectorX, getVectorY, reverseHeading } = Geometry
 
@@ -113,6 +114,16 @@ class SpaceShip extends Thing {
             duration: 70,
             size: this.data.size * 4,
             color: this.data.color,
+        }).enterWorld(this.world)
+
+        new DustCloud({
+            size: 5,
+            numberOfSpecs: 40,
+            x: this.data.x,
+            y: this.data.y,
+            duration: 80,
+            driftSpeed:2,
+            colors: ['white', this.data.color, this.data.color]
         }).enterWorld(this.world)
     }
 

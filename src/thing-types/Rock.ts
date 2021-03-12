@@ -1,5 +1,6 @@
 import {   } from '../../../worlds/src/Effect'
 import { Thing, Force, Geometry, ThingData, RenderFunctions, CollisionDetection, ViewPort,ExpandingRing } from '../_fake-module'
+import { DustCloud } from './DustCloud'
 import { SpaceShip } from './SpaceShip'
 
 class Rock extends Thing {
@@ -46,15 +47,36 @@ class Rock extends Thing {
 
             makeFragment(this.data, impactDirection + Geometry._90deg).enterWorld(this.world)
             makeFragment(this.data, impactDirection - Geometry._90deg).enterWorld(this.world)
+
+            new ExpandingRing({
+                x: report ? report.impactPoint.x : this.data.x,
+                y: report ? report.impactPoint.y : this.data.y,
+                duration: 20 + Math.floor(this.data.size / 10),
+                size: this.data.size / 2,
+                color: 'white',
+            }).enterWorld(this.world)
+
+            new DustCloud({
+                size: 5,
+                numberOfSpecs: 10,
+                x: report ? report.impactPoint.x : this.data.x,
+                y: report ? report.impactPoint.y : this.data.y,
+                duration: 40,
+                driftSpeed: 2
+            }).enterWorld(this.world)
+
+        } else {
+
+            new DustCloud({
+                size: 10,
+                numberOfSpecs: 20,
+                x: this.data.x,
+                y: this.data.y,
+                duration: 50,
+                colors: ['red', 'blue', 'pink']
+            }).enterWorld(this.world)
         }
 
-        new ExpandingRing({
-            x: report ? report.impactPoint.x : this.data.x,
-            y: report ? report.impactPoint.y : this.data.y,
-            duration: 20 + Math.floor(this.data.size / 10),
-            size: this.data.size / 2,
-            color: 'white',
-        }).enterWorld(this.world)
 
         this.leaveWorld()
 
