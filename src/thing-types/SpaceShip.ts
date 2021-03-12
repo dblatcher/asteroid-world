@@ -18,6 +18,9 @@ class SpaceShipData implements ThingData {
     fillColor?: string
     thrust?: number
     maxThrust?: number
+
+    shootCooldownDuration?:number
+    shootCooldownCurrent?:number
 }
 
 class SpaceShip extends Thing {
@@ -28,12 +31,20 @@ class SpaceShip extends Thing {
         this.data.fillColor = config.fillColor || 'white'
         this.data.thrust = config.thrust || 0
         this.data.maxThrust = config.maxThrust || 100
+        this.data.shootCooldownCurrent = 0
+        this.data.shootCooldownDuration = config.shootCooldownDuration || 20
     }
 
     get typeId() { return 'SpaceShip' }
 
     duplicate() {
         return new SpaceShip(Object.assign({}, this.data), new Force(this.momentum.magnitude, this.momentum.direction))
+    }
+
+    move() {
+        Thing.prototype.move.apply(this,[])
+
+        if (this.data.shootCooldownCurrent > 0) {this.data.shootCooldownCurrent--}
     }
 
     renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort:ViewPort) {
@@ -140,8 +151,10 @@ class SpaceShip extends Thing {
     }
 
     shoot() {
-
         if (!this.world) {return}
+
+        if (this.data.shootCooldownCurrent > 0) {return}
+        this.data.shootCooldownCurrent = this.data.shootCooldownDuration
 
         const bullet = new Bullet({
             x: this.data.x + getVectorX(this.data.size+5, this.data.heading),

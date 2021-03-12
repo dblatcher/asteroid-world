@@ -5,34 +5,6 @@ import KeyWatcher from './KeyWatcher'
 import { ViewPort } from "../../worlds/src";
 
 
-
-function watchKeys(game: AsteroidsGame) {
-    const keyWatcher = new KeyWatcher(document.body)
-
-    keyWatcher.startReportTimer(1000 / game.gameSpeed)
-    keyWatcher.on('report', (keyCodes: string[]) => {
-        if (game.world.ticksPerSecond) {
-            if (keyCodes.includes('ArrowLeft')) { game.player.data.heading += .1 }
-            if (keyCodes.includes('ArrowRight')) { game.player.data.heading -= .1 }
-            if (keyCodes.includes('ArrowUp')) { game.player.changeThrottle(game.player.data.maxThrust * .02) } else { game.player.changeThrottle(-game.player.data.maxThrust * .1) }
-        }
-    })
-
-    keyWatcher.on('keydown', (event: KeyboardEvent) => {
-        const { code } = event
-        if (game.world.ticksPerSecond) {
-            if (code == 'Space') { game.player.shoot() }
-        }
-        if (code == 'KeyP') {
-            game.togglePause()
-        }
-        if (code == 'KeyR') {
-            game.resetGame()
-        }
-    })
-}
-
-
 class AsteroidsGame {
     score: number
     lives: number
@@ -84,11 +56,19 @@ class AsteroidsGame {
 
         this.createMessageElement(['hello and welcome to', 'asteroid world'], true)
 
-        watchKeys(this)
+        const keyWatcher = new KeyWatcher(document.body)
+        keyWatcher.startReportTimer(1000 / this.gameSpeed)
+        keyWatcher.on('report', (keyCodes: string[]) => { this.respondToControls(keyCodes) })
+        keyWatcher.on('keydown', (event: KeyboardEvent) => { this.respondToKeyDown(event) })
+
         this.resetLevel(0)
         this.updateInfo()
 
         this.elements.main.classList.remove('hidden')
+    }
+
+    get isActive() {
+        return !this.elements.message && !!this.player && this.world.things.includes(this.player)
     }
 
     updateInfo() {
@@ -99,15 +79,14 @@ class AsteroidsGame {
     }
 
     togglePause() {
-
-        if (this.lives < 0 ) {return}
+        if (this.lives < 0) { return }
 
         if (this.world.ticksPerSecond) {
             this.createMessageElement(['paused'])
-            this.world.ticksPerSecond =  0 
+            this.world.ticksPerSecond = 0
         } else {
             this.removeMessageElement()
-            this.world.ticksPerSecond = this.gameSpeed 
+            this.world.ticksPerSecond = this.gameSpeed
         }
     }
 
@@ -163,6 +142,26 @@ class AsteroidsGame {
         this.player = spaceShip
     }
 
+    respondToKeyDown(event: KeyboardEvent) {
+        switch (event.code) {
+            case 'KeyP':
+                this.togglePause()
+                break;
+            case 'KeyR':
+                this.resetGame()
+                break;
+        }
+    }
+
+    respondToControls(keyCodes: string[]) {
+        const { player, isActive } = this
+        if (isActive) {
+            if (keyCodes.includes('Space')) { player.shoot() }
+            if (keyCodes.includes('ArrowLeft')) { player.data.heading += .1 }
+            if (keyCodes.includes('ArrowRight')) { player.data.heading -= .1 }
+            if (keyCodes.includes('ArrowUp')) { player.changeThrottle(player.data.maxThrust * .02) } else { player.changeThrottle(-player.data.maxThrust * .1) }
+        }
+    }
 
     handleRockHit(rock: Rock) {
         this.score += Math.max(100, 210 - Math.floor(rock.data.size))
@@ -192,8 +191,8 @@ class AsteroidsGame {
                     this.updateInfo()
                 }, 1500)
             } else {
-                setTimeout(() => { 
-                    this.createMessageElement(['GAME OVER'],true) 
+                setTimeout(() => {
+                    this.createMessageElement(['GAME OVER'], true)
                 }, 1500)
             }
         }
