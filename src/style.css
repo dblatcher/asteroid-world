@@ -1,8 +1,14 @@
 main {
-    position: relative;
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
     background-color: antiquewhite;
     padding: 10px;
     font-family: 'Courier New', Courier, monospace;
+    box-sizing: border-box;
 }
 
 main.hidden {
@@ -17,6 +23,7 @@ main.hidden {
     justify-content: center;
     align-items: center;
     position: relative;
+    box-sizing: border-box;
 }
 
 canvas {
