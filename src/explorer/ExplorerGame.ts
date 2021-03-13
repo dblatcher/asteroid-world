@@ -89,10 +89,12 @@ class ExplorerGame {
 
             this.miniMap.renderCanvas();
         }
-        this.createMessageElement(['hello and welcome to', 'Explorer'], true)
+        
+        // this.createMessageElement(['hello and welcome to', 'Explorer'], true)
+        // this.resetLevel(0)
+        // this.updateInfo()
 
-        this.resetLevel(0)
-        this.updateInfo()
+        this.resetGame()
 
         this.elements.main.classList.remove('hidden')
     }
@@ -171,7 +173,7 @@ class ExplorerGame {
         const ExplorerShip = this.world.things.filter(thing => thing.typeId == "ExplorerShip")[0] as ExplorerShip
         this.player = ExplorerShip
 
-        this.mainScreen.cameraInstruction = new CameraFollowInstruction({thing:ExplorerShip, followHeading:true, magnify:1.5, leadDistance:100})
+        this.mainScreen.cameraInstruction = new CameraFollowInstruction({thing:ExplorerShip, followHeading:true, magnify:1, leadDistance:100})
     }
 
     respondToKeyDown(event: KeyboardEvent) {
