@@ -170,4 +170,4 @@ class SpaceShip extends Thing {
 
 }
 
-export { SpaceShip }
+export { SpaceShip, SpaceShipData }
