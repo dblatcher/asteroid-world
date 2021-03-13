@@ -23,10 +23,6 @@ class Rock extends Thing {
         })
     }
 
-    duplicate() {
-        return new Rock(Object.assign({}, this.data), new Force(this.momentum.magnitude, this.momentum.direction))
-    }
-
     renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort: ViewPort) {
         RenderFunctions.renderPolygon.onCanvas(ctx, this.jaggedEdgePoints, { strokeColor: this.data.color, fillColor: this.data.fillColor }, viewPort)
     }

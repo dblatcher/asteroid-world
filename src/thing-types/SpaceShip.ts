@@ -37,10 +37,6 @@ class SpaceShip extends Thing {
 
     get typeId() { return 'SpaceShip' }
 
-    duplicate() {
-        return new SpaceShip(Object.assign({}, this.data), new Force(this.momentum.magnitude, this.momentum.direction))
-    }
-
     move() {
         Thing.prototype.move.apply(this,[])
 

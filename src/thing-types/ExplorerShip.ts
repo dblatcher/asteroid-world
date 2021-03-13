@@ -14,10 +14,6 @@ class ExplorerShip extends SpaceShip {
         this.data.isLaunchingFromPlanet = config.isLaunchingFromPlanet || false
     }
 
-    duplicate() {
-        return new ExplorerShip(Object.assign({}, this.data), new Force(this.momentum.magnitude, this.momentum.direction))
-    }
-
     get typeId() {return "ExplorerShip"}
 
     blastOff() {
