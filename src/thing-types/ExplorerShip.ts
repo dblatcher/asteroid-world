@@ -1,11 +1,12 @@
-import { Force, Physics, Thing } from '../../../worlds/src'
-import { getDistanceBetweenPoints } from '../../../worlds/src/geometry'
+import { CollisionDetection, Force, Physics, RenderFunctions, Thing, ViewPort, Geometry } from '../../../worlds/src'
 import { Planet } from './Planet'
 import { SpaceShip, SpaceShipData } from './SpaceShip'
 
+const { getDistanceBetweenPoints, getVectorX, getVectorY, reverseHeading } = Geometry
 
 class ExplorerShipData extends SpaceShipData {
     isLaunchingFromPlanet?: boolean
+    planetThisIsOn?: Planet
 }
 
 class ExplorerShip extends SpaceShip {
@@ -14,6 +15,7 @@ class ExplorerShip extends SpaceShip {
     constructor(config: ExplorerShipData, force: Force = null) {
         super(config, force)
         this.data.isLaunchingFromPlanet = config.isLaunchingFromPlanet || false
+        this.data.planetThisIsOn = config.planetThisIsOn || null
     }
 
     get typeId() { return "ExplorerShip" }
@@ -27,60 +29,77 @@ class ExplorerShip extends SpaceShip {
             )[0] as Planet || null
     }
 
-    get planetThisIsOn() {
-        if (!this.world) { return null }
-        return this.world.things
-            .filter(thing => thing.typeId === 'Planet')
-            .find(
-                planet => getDistanceBetweenPoints(planet.data, this.data) < planet.data.size + (this.data.size * 1.1)
-            ) as Planet || null
+    handleCollision(report: CollisionDetection.CollisionReport) {
+        Thing.prototype.handleCollision(report)
+
+        if (report) {
+            const otherThing = report.item1 === this ? report.item2 : report.item1
+            if (otherThing.typeId === 'Planet') {
+                console.log('PLANET', report.force)
+                if (report.force > 1000000) {
+                    this.explode()
+                } else if (!this.data.isLaunchingFromPlanet) {
+                    this.data.planetThisIsOn = otherThing as Planet
+                }
+            }
+        }
+    }
+
+    renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort:ViewPort) {
+        SpaceShip.prototype.renderOnCanvas.apply(this, [ctx, viewPort])
+
+        const { x, y, size, heading, isLaunchingFromPlanet } = this.data
+
+        if (isLaunchingFromPlanet) {
+            let backPoint = {
+                x: x - getVectorX(size, heading),
+                y: y - getVectorY(size, heading)
+            }
+            let flicker = size * (.5+ (Math.random()*.5) )
+            RenderFunctions.renderCircle.onCanvas(ctx, {x:backPoint.x, y:backPoint.y, radius:flicker}, { strokeColor: 'white', fillColor: 'red' }, viewPort)
+        }
     }
 
     blastOff() {
-        const { planetThisIsOn } = this
+        const { planetThisIsOn } = this.data
 
-        if (planetThisIsOn && !this.data.isLaunchingFromPlanet)
-
+        if (planetThisIsOn && !this.data.isLaunchingFromPlanet) {
             console.log('5,4,3,2,1...')
-        this.data.isLaunchingFromPlanet = true
+            this.data.isLaunchingFromPlanet = true
+            this.data.planetThisIsOn = null
+        }
     }
 
     updateMomentum() {
-        const { planetThisIsOn, closestPlanet,mass } = this
-        const { thrust, heading, isLaunchingFromPlanet, maxThrust } = this.data
-
+        const { closestPlanet, mass } = this
+        const { planetThisIsOn, thrust, heading, isLaunchingFromPlanet, maxThrust } = this.data
+        const thrustForce = new Force(thrust / this.mass, heading)
 
         if (isLaunchingFromPlanet) {
 
             Thing.prototype.updateMomentum.apply(this, [])
             const gravity = Physics.getGravitationalForce(this.world.gravitationalConstant, this, closestPlanet)
-            let altitude = getDistanceBetweenPoints(closestPlanet.data, this.data) - closestPlanet.data.size 
+            let altitude = getDistanceBetweenPoints(closestPlanet.data, this.data) - closestPlanet.data.size
 
             const takeOffForce = new Force(
-                ((gravity.magnitude) + 100)/mass
+                ((gravity.magnitude) + 100) / mass
                 , heading
             )
 
-            const thrustForce = new Force(thrust / this.mass, heading)
             this.momentum = Force.combine([this.momentum, thrustForce, takeOffForce])
 
-
-            
-        
-            //if (altitude > 300) {this.data.isLaunchingFromPlanet = false}
-            if (gravity.magnitude < maxThrust/2) { 
+            if (gravity.magnitude < maxThrust / 2) {
                 this.data.isLaunchingFromPlanet = false
-                console.log('ESCAPE')
+                console.log('ESCAPE', altitude)
             }
 
-            console.log(`g: ${gravity.magnitude/mass}N L: ${takeOffForce.magnitude}N : ALT: ${altitude}M`)
+           // console.log(`g: ${gravity.magnitude / mass}N L: ${takeOffForce.magnitude}N : ALT: ${altitude}M`)
 
-        } else if (!planetThisIsOn) {
-            Thing.prototype.updateMomentum.apply(this, [])
-            const thrustForce = new Force(thrust / this.mass, heading)
-            this.momentum = Force.combine([this.momentum, thrustForce])
-        } else {
+        } else if (planetThisIsOn) {
             this.momentum = Force.none
+        } else {
+            Thing.prototype.updateMomentum.apply(this, [])
+            this.momentum = Force.combine([this.momentum, thrustForce])
         }
 
     }

@@ -68,24 +68,11 @@ class ExplorerGame {
                 thing => thing.typeId === 'ExplorerShip',
                 (thing, ctx, viewPort) => {
                     const duplicate = thing.duplicate()
-                    duplicate.data.size = duplicate.data.size * 20
+                    duplicate.data.size = viewPort.visibleLineWidth * 200
                     duplicate.renderOnCanvas(ctx, viewPort)
                 }
             ))
-            this.miniMap.transformRules.push(new RenderTransformationRule(
-                thing => thing.typeId === 'Rock',
-                (thing, ctx, viewPort) => {
-                    const circle = thing.shapeValues
-                    RenderFunctions.renderCircle.onCanvas(ctx, circle, { fillColor: thing.data.fillColor }, viewPort)
-                }
-            ))
-            this.miniMap.transformRules.push(new RenderTransformationRule(
-                thing => thing.typeId === 'Bullet',
-                (thing, ctx, viewPort) => {
-                    const point = thing.shapeValues
-                    RenderFunctions.renderPoint.onCanvas(ctx, point, { fillColor: thing.data.fillColor }, viewPort)
-                }
-            ))
+
 
             this.miniMap.renderCanvas();
         }
@@ -173,7 +160,7 @@ class ExplorerGame {
         const ExplorerShip = this.world.things.filter(thing => thing.typeId == "ExplorerShip")[0] as ExplorerShip
         this.player = ExplorerShip
 
-        this.mainScreen.cameraInstruction = new CameraFollowInstruction({thing:ExplorerShip, followHeading:true, magnify:1, leadDistance:100})
+        this.mainScreen.cameraInstruction = new CameraFollowInstruction({thing:ExplorerShip, followHeading:true, magnify:.75, leadDistance:100})
     }
 
     respondToKeyDown(event: KeyboardEvent) {
