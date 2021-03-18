@@ -1,4 +1,4 @@
-import { World, Thing, ViewPort, RenderFunctions, CameraFollowInstruction } from "../../../worlds/src/index"
+import { World, Body, ViewPort, RenderFunctions, CameraFollowInstruction } from "../../../worlds/src/index"
 import { ExplorerShip } from '../thing-types/ExplorerShip';
 import { Rock } from '../thing-types/Rock';
 import KeyWatcher from '../KeyWatcher'
@@ -14,7 +14,7 @@ class ExplorerGame {
     miniMap?: ViewPort
     player: ExplorerShip
     gameSpeed: number
-    levels: Thing[][]
+    levels: Body[][]
     elements: {
         main: HTMLElement
         score: HTMLElement
@@ -23,7 +23,7 @@ class ExplorerGame {
         message: HTMLElement
     }
 
-    constructor(world: World, levels: Thing[][], gameSpeed: number, gameCanvas: HTMLCanvasElement, miniMapCanvas: HTMLCanvasElement,) {
+    constructor(world: World, levels: Body[][], gameSpeed: number, gameCanvas: HTMLCanvasElement, miniMapCanvas: HTMLCanvasElement,) {
         this.world = world
         this.gameSpeed = gameSpeed
         this.levels = levels
@@ -87,7 +87,7 @@ class ExplorerGame {
     }
 
     get isActive() {
-        return !this.elements.message && !!this.player && this.world.things.includes(this.player)
+        return !this.elements.message && !!this.player && this.world.bodies.includes(this.player)
     }
 
     updateInfo() {
@@ -151,16 +151,16 @@ class ExplorerGame {
     }
 
     resetLevel(level: number) {
-        this.world.things.splice(0, this.world.things.length)
+        this.world.bodies.splice(0, this.world.bodies.length)
 
         this.levels[level].forEach(thing => {
             thing.duplicate().enterWorld(this.world)
         })
 
-        const ExplorerShip = this.world.things.filter(thing => thing.typeId == "ExplorerShip")[0] as ExplorerShip
+        const ExplorerShip = this.world.bodies.filter(thing => thing.typeId == "ExplorerShip")[0] as ExplorerShip
         this.player = ExplorerShip
 
-        this.mainScreen.cameraInstruction = new CameraFollowInstruction({thing:ExplorerShip, followHeading:true, magnify:.75, leadDistance:100})
+        this.mainScreen.cameraInstruction = new CameraFollowInstruction({body:ExplorerShip, followHeading:true, magnify:.75, leadDistance:100})
     }
 
     respondToKeyDown(event: KeyboardEvent) {
@@ -189,9 +189,9 @@ class ExplorerGame {
         this.score += Math.max(100, 210 - Math.floor(rock.data.size))
         this.updateInfo()
 
-        const allRocksGone = this.world.things
+        const allRocksGone = this.world.bodies
             .filter(thing => thing.typeId === 'Rock')
-            .filter(thing => !this.world.thingsLeavingAtNextTick.includes(thing))
+            .filter(thing => !this.world.bodiesLeavingAtNextTick.includes(thing))
             .length === 0
 
     }

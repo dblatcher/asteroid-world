@@ -1,6 +1,6 @@
-import { AbstractGradientFill, Shape, Thing, ThingData } from "../../../worlds/src";
+import { AbstractGradientFill, Shape, Body, BodyData } from "../../../worlds/src";
 
-class PlanetData implements ThingData {
+class PlanetData implements BodyData {
     x: number
     y: number
     heading?: number
@@ -18,7 +18,7 @@ class PlanetData implements ThingData {
     name:string
 }
 
-class Planet extends Thing {
+class Planet extends Body {
     data: PlanetData
     get typeId(){return 'Planet'}
 

@@ -1,4 +1,4 @@
-import { World, Force, StarField, Thing } from '../../../worlds/src/index'
+import { World, Force, StarField, Body } from '../../../worlds/src/index'
 import { ExplorerShip } from '../thing-types/ExplorerShip';
 import { Planet } from '../thing-types/Planet';
 import { redSwirl, blueGreenBall } from './gradients';
@@ -12,7 +12,7 @@ const gameWorld = new World([
     gravitationalConstant: .1,
     width: worldWidth,
     height: worldHeight,
-    thingsExertGravity: true,
+    bodiesExertGravity: true,
     hasHardEdges: true,
     name: "gameWorld",
     airDensity: 0,

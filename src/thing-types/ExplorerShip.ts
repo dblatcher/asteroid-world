@@ -1,4 +1,4 @@
-import { CollisionDetection, Force, Physics, RenderFunctions, Thing, ViewPort, Geometry } from '../../../worlds/src'
+import { CollisionDetection, Force, Physics, RenderFunctions, Body, ViewPort, Geometry } from '../../../worlds/src'
 import { Planet } from './Planet'
 import { SpaceShip, SpaceShipData } from './SpaceShip'
 
@@ -22,7 +22,7 @@ class ExplorerShip extends SpaceShip {
 
     get closestPlanet() {
         if (!this.world) { return null }
-        return this.world.things
+        return this.world.bodies
             .filter(thing => thing.typeId === 'Planet')
             .sort(
                 (planetA, planetB) => getDistanceBetweenPoints(planetA.data, this.data) - getDistanceBetweenPoints(planetB.data, this.data)
@@ -30,7 +30,7 @@ class ExplorerShip extends SpaceShip {
     }
 
     handleCollision(report: CollisionDetection.CollisionReport) {
-        Thing.prototype.handleCollision(report)
+        Body.prototype.handleCollision(report)
 
         if (report) {
             const otherThing = report.item1 === this ? report.item2 : report.item1
@@ -77,7 +77,7 @@ class ExplorerShip extends SpaceShip {
 
         if (isLaunchingFromPlanet) {
 
-            Thing.prototype.updateMomentum.apply(this, [])
+            Body.prototype.updateMomentum.apply(this, [])
             const gravity = Physics.getGravitationalForce(this.world.gravitationalConstant, this, closestPlanet)
             let altitude = getDistanceBetweenPoints(closestPlanet.data, this.data) - closestPlanet.data.size
 
@@ -98,7 +98,7 @@ class ExplorerShip extends SpaceShip {
         } else if (planetThisIsOn) {
             this.momentum = Force.none
         } else {
-            Thing.prototype.updateMomentum.apply(this, [])
+            Body.prototype.updateMomentum.apply(this, [])
             this.momentum = Force.combine([this.momentum, thrustForce])
         }
 

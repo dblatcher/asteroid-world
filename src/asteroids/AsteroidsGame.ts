@@ -1,4 +1,4 @@
-import { World, Thing, ViewPort, RenderFunctions  } from "../../../worlds/src/index"
+import { World, Body, ViewPort, RenderFunctions  } from "../../../worlds/src/index"
 import { SpaceShip } from '../thing-types/SpaceShip';
 import { Rock } from '../thing-types/Rock';
 import KeyWatcher from '../KeyWatcher'
@@ -14,7 +14,7 @@ class AsteroidsGame {
     miniMap?: ViewPort
     player: SpaceShip
     gameSpeed: number
-    levels: Thing[][]
+    levels: Body[][]
     elements: {
         main: HTMLElement
         score: HTMLElement
@@ -23,7 +23,7 @@ class AsteroidsGame {
         message: HTMLElement
     }
 
-    constructor(world: World, levels: Thing[][], gameSpeed: number, gameCanvas: HTMLCanvasElement, miniMapCanvas: HTMLCanvasElement,) {
+    constructor(world: World, levels: Body[][], gameSpeed: number, gameCanvas: HTMLCanvasElement, miniMapCanvas: HTMLCanvasElement,) {
         this.world = world
         this.gameSpeed = gameSpeed
         this.levels = levels
@@ -98,7 +98,7 @@ class AsteroidsGame {
     }
 
     get isActive() {
-        return !this.elements.message && !!this.player && this.world.things.includes(this.player)
+        return !this.elements.message && !!this.player && this.world.bodies.includes(this.player)
     }
 
     updateInfo() {
@@ -162,13 +162,13 @@ class AsteroidsGame {
     }
 
     resetLevel(level: number) {
-        this.world.things.splice(0, this.world.things.length)
+        this.world.bodies.splice(0, this.world.bodies.length)
 
         this.levels[level].forEach(thing => {
             thing.duplicate().enterWorld(this.world)
         })
 
-        const spaceShip = this.world.things.filter(thing => thing.typeId == "SpaceShip")[0] as SpaceShip
+        const spaceShip = this.world.bodies.filter(thing => thing.typeId == "SpaceShip")[0] as SpaceShip
         this.player = spaceShip
     }
 
@@ -197,9 +197,9 @@ class AsteroidsGame {
         this.score += Math.max(100, 210 - Math.floor(rock.data.size))
         this.updateInfo()
 
-        const allRocksGone = this.world.things
+        const allRocksGone = this.world.bodies
             .filter(thing => thing.typeId === 'Rock')
-            .filter(thing => !this.world.thingsLeavingAtNextTick.includes(thing))
+            .filter(thing => !this.world.bodiesLeavingAtNextTick.includes(thing))
             .length === 0
 
         if (allRocksGone) {

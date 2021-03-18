@@ -1,7 +1,7 @@
-import { Thing, Force, ThingData, Shape, Geometry, RenderFunctions, CollisionDetection } from '../../../worlds/src/index'
+import { Body, Force, BodyData, Shape, Geometry, RenderFunctions, CollisionDetection } from '../../../worlds/src/index'
 import { Rock } from './Rock'
 
-class BulletData implements ThingData {
+class BulletData implements BodyData {
     x: number
     y: number
     color?: string
@@ -9,7 +9,7 @@ class BulletData implements ThingData {
     ticksRemaining?: number
 }
 
-class Bullet extends Thing {
+class Bullet extends Body {
 
     ticksRemaining: number
 
@@ -21,7 +21,7 @@ class Bullet extends Thing {
     get typeId() { return 'Bullet' }
 
     move() {
-        Thing.prototype.move.apply(this, [])
+        Body.prototype.move.apply(this, [])
 
         if (this.ticksRemaining-- < 0) {
             this.leaveWorld()
@@ -29,7 +29,7 @@ class Bullet extends Thing {
     }
 
     handleCollision(report: CollisionDetection.CollisionReport) {
-        Thing.prototype.handleCollision(report)
+        Body.prototype.handleCollision(report)
 
         if (report) {
             const otherThing = report.item1 === this ? report.item2 : report.item1

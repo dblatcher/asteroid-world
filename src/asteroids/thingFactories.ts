@@ -1,11 +1,11 @@
-import { Thing, Force } from '../../../worlds/src/index'
+import { Body, Force } from '../../../worlds/src/index'
 import { SpaceShip } from '../thing-types/SpaceShip'
 import { Rock } from '../thing-types/Rock'
 
 
 const rockColors = ['gainsboro', 'darksalmon', 'dimgray', 'darkgray', 'azure', 'cornsilk',]
 
-function makeRock(x: number, y: number, size: number, momentum?: Force): Thing {
+function makeRock(x: number, y: number, size: number, momentum?: Force): Body {
     const fillColor = rockColors[Math.floor(Math.random() * rockColors.length)]
 
     return new Rock({ x, y, size, 

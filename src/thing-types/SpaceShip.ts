@@ -1,10 +1,10 @@
-import { Thing, Force, ThingData, Shape, Geometry, RenderFunctions, CollisionDetection, ViewPort, ExpandingRing } from '../_fake-module'
+import { Body, Force, BodyData, Shape, Geometry, RenderFunctions, CollisionDetection, ViewPort, ExpandingRing } from '../_fake-module'
 import { Bullet } from './Bullet'
 import { DustCloud } from './DustCloud'
 
 const { getVectorX, getVectorY, reverseHeading } = Geometry
 
-class SpaceShipData implements ThingData {
+class SpaceShipData implements BodyData {
     x: number
     y: number
     heading?: number
@@ -23,7 +23,7 @@ class SpaceShipData implements ThingData {
     shootCooldownCurrent?:number
 }
 
-class SpaceShip extends Thing {
+class SpaceShip extends Body {
     data: SpaceShipData
     constructor(config: SpaceShipData, momentum: Force = null) {
         super(config, momentum);
@@ -38,7 +38,7 @@ class SpaceShip extends Thing {
     get typeId() { return 'SpaceShip' }
 
     move() {
-        Thing.prototype.move.apply(this,[])
+        Body.prototype.move.apply(this,[])
 
         if (this.data.shootCooldownCurrent > 0) {this.data.shootCooldownCurrent--}
     }
@@ -90,7 +90,7 @@ class SpaceShip extends Thing {
     }
 
     updateMomentum() {
-        Thing.prototype.updateMomentum.apply(this, [])
+        Body.prototype.updateMomentum.apply(this, [])
         const { thrust, heading } = this.data
         const thrustForce = new Force(thrust / this.mass, heading)
         this.momentum = Force.combine([this.momentum, thrustForce])
@@ -135,7 +135,7 @@ class SpaceShip extends Thing {
     }
 
     handleCollision(report: CollisionDetection.CollisionReport) {
-        Thing.prototype.handleCollision(report)
+        Body.prototype.handleCollision(report)
 
         if (report) {
             const otherThing = report.item1 === this ? report.item2 : report.item1

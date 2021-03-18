@@ -1,6 +1,6 @@
 import {
-    Thing, World, Force, Shape, Fluid, ViewPort,
-    WorldConfig, ThingData, FluidData,
+    Body, World, Force, Shape, Fluid, ViewPort,
+    WorldConfig, BodyData, FluidData,
     Effect, EffectData, ExpandingRing,
     Physics, Geometry, CollisionDetection, RenderFunctions,
     shapes,
@@ -8,8 +8,8 @@ import {
 
 
 export {
-    Thing, World, Force, Shape, Fluid, ViewPort,
-    WorldConfig, ThingData, FluidData,
+    Body, World, Force, Shape, Fluid, ViewPort,
+    WorldConfig, BodyData, FluidData,
     Effect, EffectData, ExpandingRing,
     Physics, Geometry, CollisionDetection, RenderFunctions,
     shapes,

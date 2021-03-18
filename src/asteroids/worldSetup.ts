@@ -10,7 +10,7 @@ const gameWorld = new World([
     gravitationalConstant: 2,
     width: worldWidth,
     height: worldHeight,
-    thingsExertGravity: false,
+    bodiesExertGravity: false,
     hasHardEdges: true,
     name: "gameWorld",
     backGrounds: [

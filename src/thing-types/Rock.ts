@@ -1,13 +1,13 @@
 import {   } from '../../../worlds/src/Effect'
-import { Thing, Force, Geometry, ThingData, RenderFunctions, CollisionDetection, ViewPort,ExpandingRing } from '../_fake-module'
+import { Body, Force, Geometry, BodyData, RenderFunctions, CollisionDetection, ViewPort,ExpandingRing } from '../_fake-module'
 import { DustCloud } from './DustCloud'
 import { SpaceShip } from './SpaceShip'
 
-class Rock extends Thing {
+class Rock extends Body {
 
     jaggedEdgeShape: Force[]
 
-    constructor(config: ThingData, momentum: Force = Force.none) {
+    constructor(config: BodyData, momentum: Force = Force.none) {
         super(config, momentum)
         this.jaggedEdgeShape = Rock.makeJaggedEdgeShape(config)
     }
@@ -28,7 +28,7 @@ class Rock extends Thing {
     }
 
     move() {
-        Thing.prototype.move.apply(this, [])
+        Body.prototype.move.apply(this, [])
         this.data.heading += .025
     }
 
@@ -76,7 +76,7 @@ class Rock extends Thing {
 
         this.leaveWorld()
 
-        function makeFragment(data: ThingData, splitDirection: number): Rock {
+        function makeFragment(data: BodyData, splitDirection: number): Rock {
             const newRockConfig = Object.assign({}, data, {
                 size: data.size / 2,
                 x: data.x + Geometry.getVectorX(data.size / 2, splitDirection),
@@ -88,7 +88,7 @@ class Rock extends Thing {
     }
 
     handleCollision(report: CollisionDetection.CollisionReport) {
-        Thing.prototype.handleCollision(report)
+        Body.prototype.handleCollision(report)
 
         if (report) {
             const otherThing = report.item1 === this ? report.item2 : report.item1
@@ -104,7 +104,7 @@ class Rock extends Thing {
         }
     }
 
-    static makeJaggedEdgeShape(config: ThingData): Force[] {
+    static makeJaggedEdgeShape(config: BodyData): Force[] {
         const numberOfCorners = 8 + Math.floor(Math.random() * 4)
         const cornerSegment = (Math.PI * 2) / numberOfCorners
         const corners: Force[] = []
