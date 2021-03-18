@@ -1,4 +1,4 @@
-import { Shape, Thing, ThingData } from "../../../worlds/src";
+import { AbstractGradientFill, Shape, Thing, ThingData } from "../../../worlds/src";
 
 class PlanetData implements ThingData {
     x: number
@@ -8,7 +8,7 @@ class PlanetData implements ThingData {
     headingFollowsDirection?: boolean
     shape?: Shape
     color?: string
-    fillColor?: string
+    fillColor?: string | AbstractGradientFill
     density?: number
     elasticity?: number
     immobile?: boolean
