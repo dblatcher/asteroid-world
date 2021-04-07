@@ -1,15 +1,17 @@
-import {   } from '../../../worlds/src/Effect'
-import { Body, Force, Geometry, BodyData, RenderFunctions, CollisionDetection, ViewPort,ExpandingRing } from '../_fake-module'
+import { } from '../../../worlds/src/Effect'
+import { Body, Force, Geometry, BodyData, RenderFunctions, CollisionDetection, ViewPort, ExpandingRing } from '../_fake-module'
 import { DustCloud } from './DustCloud'
 import { SpaceShip } from './SpaceShip'
 
 class Rock extends Body {
 
     jaggedEdgeShape: Force[]
+    rotation: number
 
     constructor(config: BodyData, momentum: Force = Force.none) {
         super(config, momentum)
         this.jaggedEdgeShape = Rock.makeJaggedEdgeShape(config)
+        this.rotation = (.02 + Math.random() * .01) * (Math.random() > .5 ? 1 : -1)
     }
 
     get typeId() { return 'Rock' }
@@ -29,7 +31,7 @@ class Rock extends Body {
 
     move() {
         Body.prototype.move.apply(this, [])
-        this.data.heading += .025
+        this.data.heading += this.rotation
     }
 
     shatter(report: CollisionDetection.CollisionReport = null) {
@@ -105,14 +107,14 @@ class Rock extends Body {
     }
 
     static makeJaggedEdgeShape(config: BodyData): Force[] {
-        const numberOfCorners = 8 + Math.floor(Math.random() * 4)
+        const numberOfCorners = 9 + Math.floor(Math.random() * 3)
         const cornerSegment = (Math.PI * 2) / numberOfCorners
         const corners: Force[] = []
         let i, angleVariance, radiusVariance
 
         for (i = 0; i < numberOfCorners; i++) {
-            angleVariance = (Math.random() - .5)
-            radiusVariance = (Math.random() * config.size) / 10
+            angleVariance = (Math.random() - .5) * (2 / 3)
+            radiusVariance = (Math.random() * config.size) * (2 / 14)
             corners.push(new Force(config.size - radiusVariance, (cornerSegment * i) + angleVariance))
         }
         return corners

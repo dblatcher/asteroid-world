@@ -2,7 +2,7 @@ import { Body, Force, BodyData, Shape, Geometry, RenderFunctions, CollisionDetec
 import { Bullet } from './Bullet'
 import { DustCloud } from './DustCloud'
 
-const { getVectorX, getVectorY, reverseHeading } = Geometry
+const { getVectorX, getVectorY, reverseHeading, getXYVector, translatePoint, _360deg } = Geometry
 
 class SpaceShipData implements BodyData {
     x: number
@@ -19,8 +19,8 @@ class SpaceShipData implements BodyData {
     thrust?: number
     maxThrust?: number
 
-    shootCooldownDuration?:number
-    shootCooldownCurrent?:number
+    shootCooldownDuration?: number
+    shootCooldownCurrent?: number
 }
 
 class SpaceShip extends Body {
@@ -38,33 +38,32 @@ class SpaceShip extends Body {
     get typeId() { return 'SpaceShip' }
 
     move() {
-        Body.prototype.move.apply(this,[])
+        Body.prototype.move.apply(this, [])
 
-        if (this.data.shootCooldownCurrent > 0) {this.data.shootCooldownCurrent--}
+        if (this.data.shootCooldownCurrent > 0) { this.data.shootCooldownCurrent-- }
     }
 
-    renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort:ViewPort) {
+    renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort: ViewPort) {
 
         const { x, y, size, heading, color, fillColor, thrust, maxThrust } = this.data
+        const { shapeValues } = this
 
-        let frontPoint = {
-            x: x + getVectorX(size, heading),
-            y: y + getVectorY(size, heading)
-        }
+        const frontPoint = translatePoint(shapeValues, getXYVector(size, heading))
+        const midPoint = translatePoint(shapeValues, getXYVector(size * (4 / 6), heading))
 
         const backSideAngle = Math.PI * .75
+        const backLeftPoint = translatePoint(shapeValues, getXYVector(size, heading - backSideAngle))
+        const backRightPoint = translatePoint(shapeValues, getXYVector(size, heading + backSideAngle))
 
-        let backLeftPoint = {
-            x: x + getVectorX(size, heading - backSideAngle),
-            y: y + getVectorY(size, heading - backSideAngle)
+        const cockpit: Geometry.Wedge = {
+            x: midPoint.x, y: midPoint.y,
+            radius: size * (2 / 3),
+            heading: reverseHeading(heading),
+            angle: backSideAngle * (2 / 6)
         }
-        let backRightPoint = {
-            x: x + getVectorX(size, heading + backSideAngle),
-            y: y + getVectorY(size, heading + backSideAngle)
-        }
-
+        
         RenderFunctions.renderPolygon.onCanvas(ctx, [frontPoint, backLeftPoint, backRightPoint], { strokeColor: color, fillColor }, viewPort)
-
+        RenderFunctions.renderWedge.onCanvas(ctx, cockpit, { fillColor: color, lineWidth: 1 / 2 }, viewPort);
 
         if (thrust > 0) {
             let backPoint = {
@@ -129,7 +128,7 @@ class SpaceShip extends Body {
             x: this.data.x,
             y: this.data.y,
             duration: 80,
-            driftSpeed:2,
+            driftSpeed: 2,
             colors: ['white', this.data.color, this.data.color]
         }).enterWorld(this.world)
     }
@@ -147,14 +146,14 @@ class SpaceShip extends Body {
     }
 
     shoot() {
-        if (!this.world) {return}
+        if (!this.world) { return }
 
-        if (this.data.shootCooldownCurrent > 0) {return}
+        if (this.data.shootCooldownCurrent > 0) { return }
         this.data.shootCooldownCurrent = this.data.shootCooldownDuration
 
         const bullet = new Bullet({
-            x: this.data.x + getVectorX(this.data.size+5, this.data.heading),
-            y: this.data.y + getVectorY(this.data.size+5, this.data.heading),
+            x: this.data.x + getVectorX(this.data.size + 5, this.data.heading),
+            y: this.data.y + getVectorY(this.data.size + 5, this.data.heading),
             color: 'red',
             fillColor: 'red',
             ticksRemaining: 100
