@@ -11,7 +11,7 @@ const gameWorld = new World([
     width: worldWidth,
     height: worldHeight,
     bodiesExertGravity: false,
-    hasHardEdges: true,
+    hasWrappingEdges: true,
     name: "gameWorld",
     backGrounds: [
         new StarField({width:worldWidth, height:worldHeight, numberOfStars:50, depth:5}),
