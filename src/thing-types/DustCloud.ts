@@ -7,7 +7,7 @@ class Spec {
     driftVector: Geometry.Vector
     constructor(config: DustCloudData) {
 
-        const { colors = null, size, x, y, driftSpeed = 1 } = config
+        const { colors = null, size, x, y, driftSpeed = 1, driftBiasX = 0, driftBiasY = 0 } = config
 
         if (colors) {
             this.color = colors[Math.floor(Math.random() * colors.length)]
@@ -19,8 +19,8 @@ class Spec {
         this.y = y + (Math.random() * size) - (size / 2)
 
         this.driftVector = {
-            x: (Math.random() * driftSpeed) - (driftSpeed / 2),
-            y: (Math.random() * driftSpeed) - (driftSpeed / 2),
+            x: driftSpeed * (Math.random() - (1 / 2) + driftBiasX),
+            y: driftSpeed * (Math.random() - (1 / 2)) + driftBiasY,
         }
     }
 
@@ -41,6 +41,8 @@ interface DustCloudData {
     colors?: string[]
     numberOfSpecs: number
     driftSpeed?: number
+    driftBiasX?: number
+    driftBiasY?: number
 }
 
 class DustCloud extends Effect {
@@ -71,7 +73,7 @@ class DustCloud extends Effect {
 
     renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort: ViewPort) {
         this.specs.forEach(spec => {
-            RenderFunctions.renderCircle.onCanvas(ctx, spec, { strokeColor: spec.color }, viewPort)
+            RenderFunctions.renderCircle.onCanvas(ctx, spec, { strokeColor: spec.color, fillColor:spec.color }, viewPort)
         })
     }
 }

@@ -54,13 +54,30 @@ class Rock extends Body {
                 color: 'white',
             }).enterWorld(this.world)
 
+            const driftBias = Geometry.getXYVector(1,impactDirection+Geometry._90deg) 
+
             new DustCloud({
-                size: 5,
-                numberOfSpecs: 10,
-                x: report ? report.impactPoint.x : this.data.x,
-                y: report ? report.impactPoint.y : this.data.y,
+                size: 10,
+                numberOfSpecs: this.data.size/2,
+                x: this.data.x,
+                y: this.data.y,
+                driftBiasX: driftBias.x,
+                driftBiasY: driftBias.y,
                 duration: 40,
-                driftSpeed: 2
+                driftSpeed: 1,
+                colors: [this.data.color, 'white'],
+            }).enterWorld(this.world)
+
+            new DustCloud({
+                size: 10,
+                numberOfSpecs: this.data.size/2,
+                x: this.data.x,
+                y: this.data.y,
+                driftBiasX: -driftBias.x,
+                driftBiasY: -driftBias.y,
+                duration: 40,
+                driftSpeed: 1,
+                colors: [this.data.color, 'white'],
             }).enterWorld(this.world)
 
         } else {
@@ -90,20 +107,20 @@ class Rock extends Body {
     }
 
     handleCollision(report: CollisionDetection.CollisionReport) {
-        Body.prototype.handleCollision(report)
 
-        if (report) {
-            const otherThing = report.item1 === this ? report.item2 : report.item1
-            if (otherThing.typeId === 'Bullet') {
-                this.shatter(report)
-                otherThing.leaveWorld()
-                this.world.emitter.emit('rockHit', this)
-            }
-            if (otherThing.typeId === 'SpaceShip') {
-                (otherThing as SpaceShip).explode()
-                this.world.emitter.emit('shipDeath', otherThing)
-            }
+        const otherThing = report.item1 === this ? report.item2 : report.item1
+        if (otherThing.typeId === 'Bullet') {
+            this.shatter(report)
+            otherThing.leaveWorld()
+            this.world.emitter.emit('rockHit', this)
         }
+        if (otherThing.typeId === 'SpaceShip') {
+            const drift = Geometry.getXYVector(1, this.momentum.direction);
+            (otherThing as SpaceShip).explode({driftBiasX:drift.x, driftBiasY:drift.y})
+            this.world.emitter.emit('shipDeath', otherThing)
+        }
+
+        Body.prototype.handleCollision(report)
     }
 
     static makeJaggedEdgeShape(config: BodyData): Force[] {

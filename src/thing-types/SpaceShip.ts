@@ -61,7 +61,7 @@ class SpaceShip extends Body {
             heading: reverseHeading(heading),
             angle: backSideAngle * (2 / 6)
         }
-        
+
         RenderFunctions.renderPolygon.onCanvas(ctx, [frontPoint, backLeftPoint, backRightPoint], { strokeColor: color, fillColor }, viewPort)
         RenderFunctions.renderWedge.onCanvas(ctx, cockpit, { fillColor: color, lineWidth: 1 / 2 }, viewPort);
 
@@ -95,7 +95,13 @@ class SpaceShip extends Body {
         this.momentum = Force.combine([this.momentum, thrustForce])
     }
 
-    explode() {
+    explode(config: {
+        driftBiasX?: number
+        driftBiasY?: number
+    } = {}) {
+
+        const { driftBiasX = 0, driftBiasY = 0 } = config
+
         this.leaveWorld()
 
         new ExpandingRing({
@@ -123,26 +129,28 @@ class SpaceShip extends Body {
         }).enterWorld(this.world)
 
         new DustCloud({
-            size: 5,
-            numberOfSpecs: 40,
+            size: 1,
+            numberOfSpecs: 50,
             x: this.data.x,
             y: this.data.y,
-            duration: 80,
+            duration: 100,
             driftSpeed: 2,
+            driftBiasX,
+            driftBiasY,
             colors: ['white', this.data.color, this.data.color]
         }).enterWorld(this.world)
     }
 
     handleCollision(report: CollisionDetection.CollisionReport) {
-        Body.prototype.handleCollision(report)
 
-        if (report) {
-            const otherThing = report.item1 === this ? report.item2 : report.item1
-            if (otherThing.typeId === 'Rock') {
-                this.explode()
-                this.world.emitter.emit('shipDeath', this)
-            }
+        const otherThing = report.item1 === this ? report.item2 : report.item1
+        if (otherThing.typeId === 'Rock') {
+            const drift = Geometry.getXYVector(-1, this.momentum.direction);
+            this.explode({ driftBiasX: drift.x, driftBiasY: drift.y })
+            this.world.emitter.emit('shipDeath', this)
         }
+
+        Body.prototype.handleCollision(report)
     }
 
     shoot() {

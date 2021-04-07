@@ -9,7 +9,7 @@ function makeRock(x: number, y: number, size: number, momentum?: Force): Body {
     const fillColor = rockColors[Math.floor(Math.random() * rockColors.length)]
 
     return new Rock({ x, y, size, 
-        color: 'grey', 
+        color: fillColor, 
         fillColor,
         elasticity: .5, 
         density: 5, 

@@ -22,7 +22,7 @@ const gameWorld = new World([
 
 const levels = [
     [
-        makeRock(100, 100, 20),
+        makeRock(100, 100, 80),
         makeShip(250, 250, 'blue')
     ],
     [
