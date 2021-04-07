@@ -11,7 +11,6 @@ class AsteroidsGame {
     level: number
     world: World
     mainScreen: ViewPort
-    miniMap?: ViewPort
     player: SpaceShip
     gameSpeed: number
     levels: Body[][]
@@ -23,7 +22,7 @@ class AsteroidsGame {
         message: HTMLElement
     }
 
-    constructor(world: World, levels: Body[][], gameSpeed: number, gameCanvas: HTMLCanvasElement, miniMapCanvas: HTMLCanvasElement,) {
+    constructor(world: World, levels: Body[][], gameSpeed: number, gameCanvas: HTMLCanvasElement) {
         this.world = world
         this.gameSpeed = gameSpeed
         this.levels = levels
@@ -41,10 +40,7 @@ class AsteroidsGame {
         this.world.emitter.on('shipDeath', this.handleShipDeath)
         this.world.emitter.on('rockHit', this.handleRockHit)
 
-        this.mainScreen = ViewPort.full(world, gameCanvas, 1.2)
-        this.miniMap = miniMapCanvas
-            ? ViewPort.fitToSize(world, miniMapCanvas, 150, 200)
-            : null
+        this.mainScreen = ViewPort.full(world, gameCanvas, 2)
 
         this.elements = {
             main: document.querySelector('main'),
@@ -60,35 +56,6 @@ class AsteroidsGame {
         keyWatcher.on('keydown', (event: KeyboardEvent) => { this.respondToKeyDown(event) })
 
         this.mainScreen.renderCanvas();
-        if (this.miniMap) {
-            this.miniMap.dontRenderBackground = true
-            this.miniMap.dontRenderEffects = true
-
-            this.miniMap.transformRules.push(new RenderTransformationRule(
-                thing => thing.typeId === 'SpaceShip' ,
-                (thing, ctx, viewPort) => {
-                    const duplicate = thing.duplicate()
-                    duplicate.data.size = duplicate.data.size *2
-                    duplicate.renderOnCanvas(ctx,viewPort)
-                }
-            ))
-            this.miniMap.transformRules.push(new RenderTransformationRule(
-                thing => thing.typeId === 'Rock' ,
-                (thing, ctx, viewPort) => {
-                    const circle = thing.shapeValues
-                    RenderFunctions.renderCircle.onCanvas(ctx, circle, {fillColor:thing.data.fillColor},viewPort)
-                }
-            ))
-            this.miniMap.transformRules.push(new RenderTransformationRule(
-                thing => thing.typeId === 'Bullet',
-                (thing, ctx, viewPort) => {
-                    const point = thing.shapeValues
-                    RenderFunctions.renderPoint.onCanvas(ctx, point, {fillColor:thing.data.fillColor},viewPort)
-                }
-            ))
-
-            this.miniMap.renderCanvas();
-        }
         this.createMessageElement(['hello and welcome to', 'asteroid world'], true)
 
         this.resetLevel(0)
