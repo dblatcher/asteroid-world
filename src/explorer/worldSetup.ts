@@ -1,4 +1,4 @@
-import { World, Force, StarField, Body } from '../../../worlds/src/index'
+import { World, Force, StarField, Body, Area } from '../../../worlds/src/index'
 import { ExplorerShip } from '../thing-types/ExplorerShip';
 import { Planet } from '../thing-types/Planet';
 import { redSwirl, blueGreenBall } from './gradients';
@@ -9,7 +9,7 @@ const worldWidth = 20000
 
 const gameWorld = new World([
 ], {
-    gravitationalConstant: .1,
+    gravitationalConstant: .15,
     width: worldWidth,
     height: worldHeight,
     bodiesExertGravity: true,
@@ -25,9 +25,23 @@ const gameWorld = new World([
 
 const levels = [
     [
-        new ExplorerShip({ x: 100, y: 1500, size: 10, maxThrust: 30000, density: 5, color: 'purple', elasticity: 0.1 }),
+        new ExplorerShip({ x: 4000, y: 15000, size: 10, maxThrust: 40000, density: 5, color: 'purple', elasticity: 0.1 }),
         new Planet({ name: "Earth", immobile: true, size: 500, x: 9000, y: 15000, color: 'skyblue', fillColor: blueGreenBall, density: .1, elasticity: 0.1 }),
-        new Planet({ name: "Mars", immobile: true, size: 400, x: 7000, y: 7000, color: 'red', fillColor: redSwirl, density: .05, elasticity: 0.1 })
+        new Area({
+            x: 9000, y: 15000,
+            density: 12,
+            size: 1000,
+            fillColor: 'rgba(50,70,250,0.5)',
+        }),
+
+        new Planet({ name: "Mars", immobile: true, size: 400, x: 7000, y: 7000, color: 'red', fillColor: redSwirl, density: .1, elasticity: 0.1 }),
+
+        new Area({
+            x: 7000, y: 7000,
+            density: 5,
+            size: 800,
+            fillColor: 'rgba(200,50,50,0.5)',
+        })
     ]
 ]
 

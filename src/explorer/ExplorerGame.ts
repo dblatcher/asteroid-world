@@ -1,4 +1,4 @@
-import { World, Body, ViewPort, RenderFunctions, CameraFollowInstruction } from "../../../worlds/src/index"
+import { World, Body, ViewPort, RenderFunctions, CameraFollowInstruction, Area } from "../../../worlds/src/index"
 import { ExplorerShip } from '../thing-types/ExplorerShip';
 import { Rock } from '../thing-types/Rock';
 import KeyWatcher from '../KeyWatcher'
@@ -14,7 +14,7 @@ class ExplorerGame {
     miniMap?: ViewPort
     player: ExplorerShip
     gameSpeed: number
-    levels: Body[][]
+    levels: Array<Body|Area>[]
     elements: {
         main: HTMLElement
         score: HTMLElement
@@ -23,7 +23,7 @@ class ExplorerGame {
         message: HTMLElement
     }
 
-    constructor(world: World, levels: Body[][], gameSpeed: number, gameCanvas: HTMLCanvasElement, miniMapCanvas: HTMLCanvasElement,) {
+    constructor(world: World, levels: Array<Body|Area>[], gameSpeed: number, gameCanvas: HTMLCanvasElement, miniMapCanvas: HTMLCanvasElement,) {
         this.world = world
         this.gameSpeed = gameSpeed
         this.levels = levels
@@ -160,7 +160,7 @@ class ExplorerGame {
         const ExplorerShip = this.world.bodies.filter(thing => thing.typeId == "ExplorerShip")[0] as ExplorerShip
         this.player = ExplorerShip
 
-        this.mainScreen.cameraInstruction = new CameraFollowInstruction({body:ExplorerShip, followHeading:true, magnify:.5, leadDistance:100})
+        this.mainScreen.cameraInstruction = new CameraFollowInstruction({body:ExplorerShip, followHeading:true, magnify:.75, leadDistance:100})
     }
 
     respondToKeyDown(event: KeyboardEvent) {
