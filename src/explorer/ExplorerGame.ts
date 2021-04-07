@@ -160,7 +160,7 @@ class ExplorerGame {
         const ExplorerShip = this.world.bodies.filter(thing => thing.typeId == "ExplorerShip")[0] as ExplorerShip
         this.player = ExplorerShip
 
-        this.mainScreen.cameraInstruction = new CameraFollowInstruction({body:ExplorerShip, followHeading:true, magnify:.75, leadDistance:100})
+        this.mainScreen.cameraInstruction = new CameraFollowInstruction({body:ExplorerShip, followHeading:true, magnify:.5, leadDistance:100})
     }
 
     respondToKeyDown(event: KeyboardEvent) {

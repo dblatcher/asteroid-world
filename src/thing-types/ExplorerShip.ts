@@ -36,7 +36,7 @@ class ExplorerShip extends SpaceShip {
             const otherThing = report.item1 === this ? report.item2 : report.item1
             if (otherThing.typeId === 'Planet') {
                 console.log('PLANET', report.force)
-                if (report.force > 1000000) {
+                if (report.force > 2000000) {
                     this.explode()
                 } else if (!this.data.isLaunchingFromPlanet) {
                     this.data.planetThisIsOn = otherThing as Planet
