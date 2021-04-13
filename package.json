@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --mode=development"
+    "build": "webpack --config=webpack.build.js",
+    "dev": "webpack --config=webpack.dev.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,7 +16,8 @@
     "ts-loader": "^8.0.17",
     "typescript": "^4.2.2",
     "webpack": "^5.24.2",
-    "webpack-cli": "^4.5.0"
+    "webpack-cli": "^4.5.0",
+    "webpack-merge": "^5.7.3"
   },
   "dependencies": {
     "tiny-emitter": "^2.1.0"
