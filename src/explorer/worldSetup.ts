@@ -35,7 +35,6 @@ const levels = [
         }),
 
         new Planet({ name: "Mars", immobile: true, size: 400, x: 7000, y: 7000, color: 'red', fillColor: redSwirl, density: .1, elasticity: 0.1 }),
-
         new Area({
             x: 7000, y: 7000,
             density: 5,

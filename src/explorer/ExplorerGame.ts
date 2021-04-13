@@ -5,6 +5,14 @@ import KeyWatcher from '../KeyWatcher'
 import { RenderTransformationRule } from "../../../worlds/src/ViewPort";
 
 
+interface ExplorerGameElements {
+    main: HTMLElement
+    score: HTMLElement
+    lives: HTMLElement
+    level: HTMLElement
+    message?: HTMLElement
+};
+
 class ExplorerGame {
     score: number
     lives: number
@@ -15,15 +23,9 @@ class ExplorerGame {
     player: ExplorerShip
     gameSpeed: number
     levels: Array<Body|Area>[]
-    elements: {
-        main: HTMLElement
-        score: HTMLElement
-        lives: HTMLElement
-        level: HTMLElement
-        message: HTMLElement
-    }
+    elements: ExplorerGameElements
 
-    constructor(world: World, levels: Array<Body|Area>[], gameSpeed: number, gameCanvas: HTMLCanvasElement, miniMapCanvas: HTMLCanvasElement,) {
+    constructor(world: World, levels: Array<Body|Area>[], gameSpeed: number, gameCanvas: HTMLCanvasElement, miniMapCanvas: HTMLCanvasElement, elements: ExplorerGameElements) {
         this.world = world
         this.gameSpeed = gameSpeed
         this.levels = levels
@@ -41,18 +43,15 @@ class ExplorerGame {
         this.world.emitter.on('shipDeath', this.handleShipDeath)
         this.world.emitter.on('rockHit', this.handleRockHit)
 
-        this.mainScreen = new ViewPort({ world, canvas: gameCanvas, x: 100, y: 100, width: 500, height: 500 })
+        this.mainScreen = new ViewPort({ world, canvas: gameCanvas, x: 100, y: 100, width: 1000, height: 1000 })
+
+        
+
         this.miniMap = miniMapCanvas
             ? ViewPort.fitToSize(world, miniMapCanvas, 150, 200)
             : null
 
-        this.elements = {
-            main: document.querySelector('main'),
-            score: document.getElementById('score'),
-            lives: document.getElementById('lives'),
-            level: document.getElementById('level'),
-            message: null,
-        }
+        this.elements = elements;
 
         const keyWatcher = new KeyWatcher(document.body)
         keyWatcher.startReportTimer(1000 / this.gameSpeed)
@@ -160,7 +159,7 @@ class ExplorerGame {
         const ExplorerShip = this.world.bodies.filter(thing => thing.typeId == "ExplorerShip")[0] as ExplorerShip
         this.player = ExplorerShip
 
-        this.mainScreen.cameraInstruction = new CameraFollowInstruction({body:ExplorerShip, followHeading:true, magnify:.75, leadDistance:100})
+        this.mainScreen.cameraInstruction = new CameraFollowInstruction({body:ExplorerShip, followHeading:true, magnify:.75, leadDistance:300})
     }
 
     respondToKeyDown(event: KeyboardEvent) {

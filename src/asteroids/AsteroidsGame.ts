@@ -1,9 +1,16 @@
-import { World, Body, ViewPort, RenderFunctions  } from "../../../worlds/src/index"
+import { World, Body, ViewPort  } from "../../../worlds/src/index"
 import { SpaceShip } from '../thing-types/SpaceShip';
 import { Rock } from '../thing-types/Rock';
 import KeyWatcher from '../KeyWatcher'
-import { RenderTransformationRule } from "../../../worlds/src/ViewPort";
 
+
+interface AsteroidsGameElements {
+    main: HTMLElement
+    score: HTMLElement
+    lives: HTMLElement
+    level: HTMLElement
+    message?: HTMLElement
+};
 
 class AsteroidsGame {
     score: number
@@ -14,15 +21,9 @@ class AsteroidsGame {
     player: SpaceShip
     gameSpeed: number
     levels: Body[][]
-    elements: {
-        main: HTMLElement
-        score: HTMLElement
-        lives: HTMLElement
-        level: HTMLElement
-        message: HTMLElement
-    }
+    elements: AsteroidsGameElements
 
-    constructor(world: World, levels: Body[][], gameSpeed: number, gameCanvas: HTMLCanvasElement) {
+    constructor(world: World, levels: Body[][], gameSpeed: number, gameCanvas: HTMLCanvasElement, elements:AsteroidsGameElements) {
         this.world = world
         this.gameSpeed = gameSpeed
         this.levels = levels
@@ -42,13 +43,7 @@ class AsteroidsGame {
 
         this.mainScreen = ViewPort.full(world, gameCanvas, 2)
 
-        this.elements = {
-            main: document.querySelector('main'),
-            score: document.getElementById('score'),
-            lives: document.getElementById('lives'),
-            level: document.getElementById('level'),
-            message: null,
-        }
+        this.elements = elements;
 
         const keyWatcher = new KeyWatcher(document.body)
         keyWatcher.startReportTimer(1000 / this.gameSpeed)
