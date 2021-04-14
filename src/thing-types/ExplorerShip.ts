@@ -7,6 +7,7 @@ const { getDistanceBetweenPoints, getVectorX, getVectorY, reverseHeading } = Geo
 class ExplorerShipData extends SpaceShipData {
     isLaunchingFromPlanet?: boolean
     planetThisIsOn?: Planet
+    maxImpact?: number
 }
 
 class ExplorerShip extends SpaceShip {
@@ -16,6 +17,7 @@ class ExplorerShip extends SpaceShip {
         super(config, force)
         this.data.isLaunchingFromPlanet = config.isLaunchingFromPlanet || false
         this.data.planetThisIsOn = config.planetThisIsOn || null
+        this.data.maxImpact = config.maxImpact || 0
     }
 
     get typeId() { return "ExplorerShip" }
@@ -36,7 +38,7 @@ class ExplorerShip extends SpaceShip {
             const otherThing = report.item1 === this ? report.item2 : report.item1
             if (otherThing.typeId === 'Planet') {
                 console.log('PLANET', report.force)
-                if (report.force > 2000000) {
+                if (report.force > this.data.maxImpact) {
                     this.explode()
                 } else if (!this.data.isLaunchingFromPlanet) {
                     this.data.planetThisIsOn = otherThing as Planet

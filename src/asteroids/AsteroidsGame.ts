@@ -149,8 +149,8 @@ class AsteroidsGame {
         const { player, isActive } = this
         if (isActive) {
             if (keyCodes.includes('Space')) { player.shoot() }
-            if (keyCodes.includes('ArrowLeft')) { player.data.heading += .1 }
-            if (keyCodes.includes('ArrowRight')) { player.data.heading -= .1 }
+            if (keyCodes.includes('ArrowLeft')) { player.steer("LEFT") }
+            if (keyCodes.includes('ArrowRight')) { player.steer("RIGHT") }
             if (keyCodes.includes('ArrowUp')) { player.changeThrottle(player.data.maxThrust * .02) } else { player.changeThrottle(-player.data.maxThrust * .1) }
         }
     }

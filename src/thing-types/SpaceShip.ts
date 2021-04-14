@@ -81,13 +81,6 @@ class SpaceShip extends Body {
         }
     }
 
-    changeThrottle(change: number) {
-        let newAmount = this.data.thrust + change
-        if (newAmount < 0) { newAmount = 0 }
-        if (newAmount > this.data.maxThrust) { newAmount = this.data.maxThrust }
-        this.data.thrust = newAmount
-    }
-
     updateMomentum() {
         Body.prototype.updateMomentum.apply(this, [])
         const { thrust, heading } = this.data
@@ -153,6 +146,9 @@ class SpaceShip extends Body {
         Body.prototype.handleCollision(report)
     }
 
+
+    get steerSpeed() { return .075 }
+
     shoot() {
         if (!this.world) { return }
 
@@ -169,6 +165,24 @@ class SpaceShip extends Body {
 
         bullet.enterWorld(this.world)
 
+    }
+
+    steer(direction: "LEFT" | "RIGHT") {
+        switch (direction) {
+            case "LEFT":
+                this.data.heading += this.steerSpeed;
+                break;
+            case "RIGHT":
+                this.data.heading -= this.steerSpeed;
+                break;
+        }
+    }
+
+    changeThrottle(change: number) {
+        let newAmount = this.data.thrust + change
+        if (newAmount < 0) { newAmount = 0 }
+        if (newAmount > this.data.maxThrust) { newAmount = this.data.maxThrust }
+        this.data.thrust = newAmount
     }
 
 }

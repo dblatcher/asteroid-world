@@ -4,8 +4,8 @@ import { Planet } from '../thing-types/Planet';
 import { redSwirl, blueGreenBall } from './gradients';
 
 
-const worldHeight = 20000
-const worldWidth = 20000
+const worldHeight = 40000
+const worldWidth = 40000
 
 const gameWorld = new World([
 ], {
@@ -25,12 +25,22 @@ const gameWorld = new World([
 
 const levels = [
     [
-        new ExplorerShip({ x: 4000, y: 15000, size: 10, maxThrust: 40000, density: 5, color: 'purple', elasticity: 0.1 }),
-        new Planet({ name: "Earth", immobile: true, size: 500, x: 9000, y: 15000, color: 'skyblue', fillColor: blueGreenBall, density: .1, elasticity: 0.1 }),
+        new ExplorerShip({ x: 4000, y: 15000, size: 10, 
+            maxThrust: 50000, 
+            density: 5, 
+            color: 'purple', 
+            elasticity: 0.1, 
+            maxImpact:1250000 
+        }),
+        new Planet({ name: "Earth", immobile: true, 
+            size: 1000, x: 9000, y: 25000, 
+            density: .05, elasticity: 0.1,
+            color: 'skyblue', fillColor: blueGreenBall, 
+        }),
         new Area({
-            x: 9000, y: 15000,
-            density: 12,
-            size: 1000,
+            x: 9000, y: 25000,
+            density: 15,
+            size: 2500,
             fillColor: 'rgba(50,70,250,0.5)',
         }),
 

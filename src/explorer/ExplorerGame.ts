@@ -22,10 +22,10 @@ class ExplorerGame {
     miniMap?: ViewPort
     player: ExplorerShip
     gameSpeed: number
-    levels: Array<Body|Area>[]
+    levels: Array<Body | Area>[]
     elements: ExplorerGameElements
 
-    constructor(world: World, levels: Array<Body|Area>[], gameSpeed: number, gameCanvas: HTMLCanvasElement, miniMapCanvas: HTMLCanvasElement, elements: ExplorerGameElements) {
+    constructor(world: World, levels: Array<Body | Area>[], gameSpeed: number, gameCanvas: HTMLCanvasElement, miniMapCanvas: HTMLCanvasElement, elements: ExplorerGameElements) {
         this.world = world
         this.gameSpeed = gameSpeed
         this.levels = levels
@@ -45,7 +45,7 @@ class ExplorerGame {
 
         this.mainScreen = new ViewPort({ world, canvas: gameCanvas, x: 100, y: 100, width: 1000, height: 1000 })
 
-        
+
 
         this.miniMap = miniMapCanvas
             ? ViewPort.fitToSize(world, miniMapCanvas, 150, 200)
@@ -75,7 +75,7 @@ class ExplorerGame {
 
             this.miniMap.renderCanvas();
         }
-        
+
         // this.createMessageElement(['hello and welcome to', 'Explorer'], true)
         // this.resetLevel(0)
         // this.updateInfo()
@@ -159,7 +159,7 @@ class ExplorerGame {
         const ExplorerShip = this.world.bodies.filter(thing => thing.typeId == "ExplorerShip")[0] as ExplorerShip
         this.player = ExplorerShip
 
-        this.mainScreen.cameraInstruction = new CameraFollowInstruction({body:ExplorerShip, followHeading:true, magnify:.75, leadDistance:300})
+        this.mainScreen.cameraInstruction = new CameraFollowInstruction({ body: ExplorerShip, followHeading: true, magnify: .75, leadDistance: 300 })
     }
 
     respondToKeyDown(event: KeyboardEvent) {
@@ -178,9 +178,10 @@ class ExplorerGame {
         if (isActive) {
             if (keyCodes.includes('Space')) { player.shoot() }
             if (keyCodes.includes('KeyZ')) { player.blastOff() }
-            if (keyCodes.includes('ArrowLeft')) { player.data.heading += .1 }
-            if (keyCodes.includes('ArrowRight')) { player.data.heading -= .1 }
-            if (keyCodes.includes('ArrowUp')) { player.changeThrottle(player.data.maxThrust * .02) } else { player.changeThrottle(-player.data.maxThrust * .1) }
+            if (keyCodes.includes('ArrowLeft')) { player.steer("LEFT") }
+            if (keyCodes.includes('ArrowRight')) { player.steer("RIGHT") }
+            if (keyCodes.includes('ArrowUp')) { player.changeThrottle(player.data.maxThrust * .02) }
+            if (keyCodes.includes('ArrowDown')) { player.changeThrottle(-player.data.maxThrust * .1) }
         }
     }
 
