@@ -1,7 +1,6 @@
-import { World, Body, ViewPort, RenderFunctions, CameraFollowInstruction, Area } from "../../../worlds/src/index"
+import { World, Body, ViewPort, CameraFollowInstruction, Area, KeyWatcher } from "../../../worlds/src/index"
 import { ExplorerShip } from '../thing-types/ExplorerShip';
 import { Rock } from '../thing-types/Rock';
-import KeyWatcher from '../KeyWatcher'
 import { RenderTransformationRule } from "../../../worlds/src/ViewPort";
 
 

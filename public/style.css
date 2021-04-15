@@ -41,6 +41,31 @@ canvas {
     color: antiquewhite;
 }
 
+#soundToggle {
+    cursor: pointer;
+    margin:  .25rem;
+}
+
+#soundToggle[data-sound-enabled=false]{
+    background-color: brown;
+}
+
+#soundToggle[data-sound-enabled=false]::before {
+    content: '\2610';
+}
+
+#soundToggle[data-sound-enabled=true] {
+    background-color: green;
+}
+
+#soundToggle[data-sound-enabled=true]::before {
+    content: '\2611';
+}
+
+#soundToggle[data-toggle-broken=true] {
+    opacity: .5;
+}
+
 .message {
     position: absolute;
     left: 50%;

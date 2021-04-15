@@ -54,11 +54,11 @@ class Rock extends Body {
                 color: 'white',
             }).enterWorld(this.world)
 
-            const driftBias = Geometry.getXYVector(1,impactDirection+Geometry._90deg) 
+            const driftBias = Geometry.getXYVector(1, impactDirection + Geometry._90deg)
 
             new DustCloud({
                 size: 10,
-                numberOfSpecs: this.data.size/2,
+                numberOfSpecs: this.data.size / 2,
                 x: this.data.x,
                 y: this.data.y,
                 driftBiasX: driftBias.x,
@@ -70,7 +70,7 @@ class Rock extends Body {
 
             new DustCloud({
                 size: 10,
-                numberOfSpecs: this.data.size/2,
+                numberOfSpecs: this.data.size / 2,
                 x: this.data.x,
                 y: this.data.y,
                 driftBiasX: -driftBias.x,
@@ -78,8 +78,9 @@ class Rock extends Body {
                 duration: 40,
                 driftSpeed: 1,
                 colors: [this.data.color, 'white'],
-            }).enterWorld(this.world)
+            }).enterWorld(this.world);
 
+            this.world.emitter.emit('SFX', { soundName: 'rockThud', source: this });
         } else {
 
             new DustCloud({
@@ -89,7 +90,8 @@ class Rock extends Body {
                 y: this.data.y,
                 duration: 50,
                 colors: ['red', 'blue', 'pink']
-            }).enterWorld(this.world)
+            }).enterWorld(this.world);
+            this.world.emitter.emit('SFX', { soundName: 'rockDisintergrating', source: this });
         }
 
 
@@ -116,8 +118,11 @@ class Rock extends Body {
         }
         if (otherThing.typeId === 'SpaceShip') {
             const drift = Geometry.getXYVector(1, this.momentum.direction);
-            (otherThing as SpaceShip).explode({driftBiasX:drift.x, driftBiasY:drift.y})
+            (otherThing as SpaceShip).explode({ driftBiasX: drift.x, driftBiasY: drift.y })
             this.world.emitter.emit('shipDeath', otherThing)
+        }
+        if (otherThing.typeId === 'Rock') {
+            this.world.emitter.emit('SFX', { soundName: 'rockThud', config: { volume: .2 }, source: this });
         }
 
         Body.prototype.handleCollision(report)

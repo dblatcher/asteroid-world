@@ -1,7 +1,6 @@
-import { World, Body, ViewPort  } from "../../../worlds/src/index"
+import { World, Body, ViewPort, SoundPlayer, KeyWatcher } from "../../../worlds/src/index"
 import { SpaceShip } from '../thing-types/SpaceShip';
 import { Rock } from '../thing-types/Rock';
-import KeyWatcher from '../KeyWatcher'
 
 
 interface AsteroidsGameElements {
@@ -22,20 +21,23 @@ class AsteroidsGame {
     gameSpeed: number
     levels: Body[][]
     elements: AsteroidsGameElements
+    soundPlayer: SoundPlayer
 
-    constructor(world: World, levels: Body[][], gameSpeed: number, gameCanvas: HTMLCanvasElement, elements:AsteroidsGameElements) {
+    constructor(world: World, levels: Body[][], gameSpeed: number, gameCanvas: HTMLCanvasElement, elements: AsteroidsGameElements, soundPlayer: SoundPlayer = null) {
         this.world = world
         this.gameSpeed = gameSpeed
         this.levels = levels
         this.score = 0
         this.lives = -1
         this.level = 0
+        this.soundPlayer = soundPlayer;
 
         this.resetGame = this.resetGame.bind(this)
         this.createMessageElement = this.createMessageElement.bind(this)
         this.resetLevel = this.resetLevel.bind(this)
         this.handleRockHit = this.handleRockHit.bind(this)
         this.handleShipDeath = this.handleShipDeath.bind(this)
+        this.playSfx = this.playSfx.bind(this)
 
         //this.world.ticksPerSecond = gameSpeed
         this.world.emitter.on('shipDeath', this.handleShipDeath)
@@ -55,6 +57,10 @@ class AsteroidsGame {
 
         this.resetLevel(0)
         this.updateInfo()
+
+        if (this.soundPlayer) {
+            this.world.emitter.on('SFX', this.playSfx)
+        }
 
         this.elements.main.classList.remove('hidden')
     }
@@ -188,6 +194,10 @@ class AsteroidsGame {
                 }, 1500)
             }
         }
+    }
+
+    playSfx(payload: any) {
+        this.soundPlayer.play(payload.soundName, payload.config || {});
     }
 
 }
