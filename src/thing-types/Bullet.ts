@@ -22,9 +22,7 @@ class Bullet extends Body {
 
     get typeId() { return 'Bullet' }
 
-    move() {
-        Body.prototype.move.apply(this, [])
-
+    tick() {
         if (this.ticksRemaining-- < 0) {
             this.leaveWorld()
         }
@@ -54,13 +52,23 @@ class Bullet extends Body {
         Body.prototype.handleCollision(report)
 
         if (report) {
-            const otherThing = report.item1 === this ? report.item2 : report.item1
-            if (otherThing.typeId === 'Rock') {
-                (otherThing as Rock).shatter(report)
+            switch(report.item2.typeId) {
+                case 'Rock':
                 this.leaveWorld()
-                this.world.emitter.emit('rockHit', otherThing)
+                break;
             }
         }
+    }
+
+
+    respondToImpact(report: CollisionDetection.CollisionReport) {
+
+        switch(report.item1.typeId) {
+            case 'Rock':
+                this.leaveWorld()
+                break;
+        }
+
     }
 
 }

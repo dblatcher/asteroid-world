@@ -37,9 +37,7 @@ class SpaceShip extends Body {
 
     get typeId() { return 'SpaceShip' }
 
-    move() {
-        Body.prototype.move.apply(this, [])
-
+    tick() {
         if (this.data.shootCooldownCurrent > 0) { this.data.shootCooldownCurrent-- }
     }
 
@@ -138,8 +136,8 @@ class SpaceShip extends Body {
 
     handleCollision(report: CollisionDetection.CollisionReport) {
 
-        const otherThing = report.item1 === this ? report.item2 : report.item1
-        if (otherThing.typeId === 'Rock') {
+        switch(report.item2.typeId) {
+            case 'Rock':
             const drift = Geometry.getXYVector(-1, this.momentum.direction);
             this.explode({ driftBiasX: drift.x, driftBiasY: drift.y })
             this.world.emitter.emit('shipDeath', this)
@@ -148,6 +146,18 @@ class SpaceShip extends Body {
         Body.prototype.handleCollision(report)
     }
 
+
+    respondToImpact(report: CollisionDetection.CollisionReport) {
+
+        switch(report.item1.typeId) {
+            case 'Rock':
+                const drift = Geometry.getXYVector(1, report.item1.momentum.direction);
+                this.explode({ driftBiasX: drift.x, driftBiasY: drift.y })
+                this.world.emitter.emit('shipDeath', this)
+                break;
+        }
+
+    }
 
     get steerSpeed() { return .075 }
 

@@ -29,8 +29,7 @@ class Rock extends Body {
         RenderFunctions.renderPolygon.onCanvas(ctx, this.jaggedEdgePoints, { strokeColor: this.data.color, fillColor: this.data.fillColor }, viewPort)
     }
 
-    move() {
-        Body.prototype.move.apply(this, [])
+    tick() {
         this.data.heading += this.rotation
     }
 
@@ -110,22 +109,27 @@ class Rock extends Body {
 
     handleCollision(report: CollisionDetection.CollisionReport) {
 
-        const otherThing = report.item1 === this ? report.item2 : report.item1
-        if (otherThing.typeId === 'Bullet') {
-            this.shatter(report)
-            otherThing.leaveWorld()
-            this.world.emitter.emit('rockHit', this)
-        }
-        if (otherThing.typeId === 'SpaceShip') {
-            const drift = Geometry.getXYVector(1, this.momentum.direction);
-            (otherThing as SpaceShip).explode({ driftBiasX: drift.x, driftBiasY: drift.y })
-            this.world.emitter.emit('shipDeath', otherThing)
-        }
-        if (otherThing.typeId === 'Rock') {
-            this.world.emitter.emit('SFX', { soundName: 'rockThud', config: { volume: .2 }, source: this });
+        switch (report.item2.typeId) {
+            case 'Bullet':
+                this.shatter(report)
+                this.world.emitter.emit('rockHit', this)
+                break;
+
+            case 'Rock':
+                this.world.emitter.emit('SFX', { soundName: 'rockThud', config: { volume: .2 }, source: this });
         }
 
         Body.prototype.handleCollision(report)
+    }
+
+    respondToImpact(report: CollisionDetection.CollisionReport) {
+
+        switch (report.item1.typeId) {
+            case 'Bullet':
+                this.shatter(report)
+                this.world.emitter.emit('rockHit', this)
+                break;
+        }
     }
 
     static makeJaggedEdgeShape(config: BodyData): Force[] {
