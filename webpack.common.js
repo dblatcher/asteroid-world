@@ -4,6 +4,7 @@ module.exports = {
   entry: {
     asteroids:'./src/asteroids/index.ts',
     explorer:'./src/explorer/index.ts',
+    trireme:'./src/trireme/index.ts',
   },
   watch:true,
   module: {
