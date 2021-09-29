@@ -22,9 +22,9 @@ function makeShip(x: number, y: number, color: string): Galley {
     return new Galley({
         x, y, color,
         size: 30,
-        density: 10,
+        density: 5,
         elasticity: .7,
-        maxThrust: 15000,
+        maxThrust: 30000,
     })
 }
 

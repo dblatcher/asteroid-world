@@ -7,7 +7,7 @@ const worldWidth = 750
 
 const gameWorld = new World([
 ], {
-    gravitationalConstant: 2,
+    gravitationalConstant: 0,
     width: worldWidth,
     height: worldHeight,
     bodiesExertGravity: false,
@@ -21,7 +21,7 @@ const gameWorld = new World([
 
 const levels = [
     [
-        makeRock(100, 100, 80),
+        makeRock(100, 100, 5),
         makeShip(250, 250, 'blue')
     ],
     [

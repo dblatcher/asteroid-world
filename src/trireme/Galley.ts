@@ -1,7 +1,8 @@
 import { Body, Force, BodyData, Shape, Geometry, RenderFunctions, CollisionDetection, ViewPort, ExpandingRing, shapes } from '../_fake-module'
 import { Bullet } from '../thing-types/Bullet'
 import { DustCloud } from '../thing-types/DustCloud'
-import { Point } from '../../../worlds/src/geometry'
+import { normaliseHeading, Point, _90deg, _deg } from '../../../worlds/src/geometry'
+import { calculateDragForce } from '../../../worlds/src/physics'
 
 const { getVectorX, getVectorY, reverseHeading, getXYVector, translatePoint, _360deg } = Geometry
 
@@ -54,50 +55,47 @@ class Galley extends Body {
         if (this.data.shootCooldownCurrent > 0) { this.data.shootCooldownCurrent-- }
     }
 
-    // renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort: ViewPort) {
+    renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort: ViewPort) {
+        Body.prototype.renderOnCanvas.apply(this, [ctx, viewPort])
 
-    //     const { x, y, size, heading, color, fillColor, thrust, maxThrust } = this.data
-    //     const { shapeValues } = this
+    }
 
-    //     const frontPoint = translatePoint(shapeValues, getXYVector(size, heading))
-    //     const midPoint = translatePoint(shapeValues, getXYVector(size * (4 / 6), heading))
+    get angleAwayFromHeading(): number {
+        const { heading } = this.data
+        const { direction } = this.momentum
+        return normaliseHeading(Math.abs(heading - direction))
+    }
 
-    //     const backSideAngle = Math.PI * .75
-    //     const backLeftPoint = translatePoint(shapeValues, getXYVector(size, heading - backSideAngle))
-    //     const backRightPoint = translatePoint(shapeValues, getXYVector(size, heading + backSideAngle))
+    get dragMultiplier(): number {
+        const { angleAwayFromHeading } = this
+        const degreesToHeading = Math.floor(angleAwayFromHeading / _deg);
 
-    //     const cockpit: Geometry.Wedge = {
-    //         x: midPoint.x, y: midPoint.y,
-    //         radius: size * (2 / 3),
-    //         heading: reverseHeading(heading),
-    //         angle: backSideAngle * (2 / 6)
-    //     }
+        const effect = degreesToHeading <= 90
+            ? degreesToHeading / 90
+            : degreesToHeading <= 180
+                ? (180 - degreesToHeading) / 90
+                : degreesToHeading <= 270
+                    ? (degreesToHeading - 180) / 90
+                    : (360 - degreesToHeading) / 90;
 
-    //     RenderFunctions.renderPolygon.onCanvas(ctx, [frontPoint, backLeftPoint, backRightPoint], { strokeColor: color, fillColor }, viewPort)
-    //     RenderFunctions.renderWedge.onCanvas(ctx, cockpit, { fillColor: color, lineWidth: 1 / 2 }, viewPort);
-
-    //     if (thrust > 0) {
-    //         let backPoint = {
-    //             x: x - getVectorX(size, heading),
-    //             y: y - getVectorY(size, heading)
-    //         }
-
-    //         let flicker = (Math.random() - .5) * .5
-    //         let flameEndPoint = {
-    //             x: backPoint.x + getVectorX(size * (thrust / maxThrust) * 2, reverseHeading(heading + flicker)),
-    //             y: backPoint.y + getVectorY(size * (thrust / maxThrust) * 2, reverseHeading(heading + flicker))
-    //         }
-
-    //         RenderFunctions.renderPolygon.onCanvas(ctx, [backRightPoint, flameEndPoint, backLeftPoint], { strokeColor: 'blue', fillColor: 'green' }, viewPort)
-    //     }
-    // }
+        return 1 + (effect * 4)
+    }
 
     updateMomentum() {
-        Body.prototype.updateMomentum.apply(this, [])
+        const { mass, dragMultiplier } = this
+
+        const drag = calculateDragForce(this, Force.combine([this.momentum]));
+
+        drag.magnitude *= dragMultiplier;
+
+        this.momentum = Force.combine([this.momentum, drag])
+        this.otherBodiesCollidedWithThisTick = []
+
         const { thrust, heading } = this.data
-        const thrustForce = new Force(thrust / this.mass, heading)
+        const thrustForce = new Force(thrust / mass, heading)
         this.momentum = Force.combine([this.momentum, thrustForce])
     }
+
 
     explode(config: {
         driftBiasX?: number
