@@ -1,8 +1,9 @@
 import { Body, Force, BodyData, Shape, Geometry, RenderFunctions, CollisionDetection, ViewPort, ExpandingRing, shapes } from '../_fake-module'
 import { Bullet } from '../thing-types/Bullet'
 import { DustCloud } from '../thing-types/DustCloud'
-import { normaliseHeading, Point, _90deg, _deg } from '../../../worlds/src/geometry'
+import { normaliseHeading, Point, Vector, _90deg, _deg } from '../../../worlds/src/geometry'
 import { calculateDragForce } from '../../../worlds/src/physics'
+import { renderLine } from '../../../worlds/src/renderFunctions'
 
 const { getVectorX, getVectorY, reverseHeading, getXYVector, translatePoint, _360deg } = Geometry
 
@@ -15,6 +16,7 @@ class GalleyData implements BodyData {
     density?: number
     shape?: Shape
     elasticity?: number
+    corners?: Point[]
 
     headingFollowsDirection?: false
     fillColor?: string
@@ -24,14 +26,15 @@ class GalleyData implements BodyData {
     shootCooldownDuration?: number
     shootCooldownCurrent?: number
 
-    corners?: Point[]
+    rudderAngle: number
 }
 
 class Galley extends Body {
     data: GalleyData
+
     constructor(config: GalleyData, momentum: Force = null) {
         super(config, momentum);
-        this.data.color = config.color || 'red'
+        this.data.color = config.color || 'white'
         this.data.fillColor = config.fillColor || 'white'
         this.data.thrust = config.thrust || 0
         this.data.maxThrust = config.maxThrust || 100
@@ -51,12 +54,29 @@ class Galley extends Body {
 
     get typeId() { return 'Galley' }
 
+    rudderLength = 15
+
+    steerSpeed = .05
+
     tick() {
         if (this.data.shootCooldownCurrent > 0) { this.data.shootCooldownCurrent-- }
+        const rotation = this.data.rudderAngle * this.momentum.magnitude / 200
+        this.data.heading += rotation
     }
 
     renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort: ViewPort) {
         Body.prototype.renderOnCanvas.apply(this, [ctx, viewPort])
+
+        const toBack: Vector = new Force(this.data.size, this.data.heading).vector
+        const back: Point = translatePoint(this.shapeValues, toBack, true)
+
+        const toRudderEnd = new Force(this.rudderLength, this.data.heading + this.data.rudderAngle)
+        const rudderEnd: Point = translatePoint(back, toRudderEnd.vector, true)
+
+        renderLine.onCanvas(ctx, [
+            back,
+            rudderEnd,
+        ], { fillColor: 'red', strokeColor: 'red', lineWidth: 8 }, viewPort)
 
     }
 
@@ -78,12 +98,11 @@ class Galley extends Body {
                     ? (degreesToHeading - 180) / 90
                     : (360 - degreesToHeading) / 90;
 
-        return 1 + (effect * 4)
+        return 1 + (effect * 5)
     }
 
     updateMomentum() {
         const { mass, dragMultiplier } = this
-
         const drag = calculateDragForce(this, Force.combine([this.momentum]));
 
         drag.magnitude *= dragMultiplier;
@@ -92,6 +111,7 @@ class Galley extends Body {
         this.otherBodiesCollidedWithThisTick = []
 
         const { thrust, heading } = this.data
+
         const thrustForce = new Force(thrust / mass, heading)
         this.momentum = Force.combine([this.momentum, thrustForce])
     }
@@ -170,8 +190,6 @@ class Galley extends Body {
 
     }
 
-    get steerSpeed() { return .075 }
-
     shoot() {
         if (!this.world) { return }
 
@@ -193,12 +211,15 @@ class Galley extends Body {
     steer(direction: "LEFT" | "RIGHT") {
         switch (direction) {
             case "LEFT":
-                this.data.heading += this.steerSpeed;
+                this.data.rudderAngle += this.steerSpeed;
                 break;
             case "RIGHT":
-                this.data.heading -= this.steerSpeed;
+                this.data.rudderAngle -= this.steerSpeed;
                 break;
         }
+
+        this.data.rudderAngle = Math.max(this.data.rudderAngle, -60 * _deg)
+        this.data.rudderAngle = Math.min(this.data.rudderAngle, 60 * _deg)
     }
 
     changeThrottle(change: number) {

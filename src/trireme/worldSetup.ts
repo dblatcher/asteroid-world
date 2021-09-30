@@ -13,7 +13,7 @@ const gameWorld = new World([
     bodiesExertGravity: false,
     hasWrappingEdges: true,
     name: "gameWorld",
-    airDensity:1,
+    airDensity:.5,
     backGrounds: [
     ]
 });
