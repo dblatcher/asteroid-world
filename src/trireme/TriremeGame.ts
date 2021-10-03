@@ -157,7 +157,12 @@ class TriremeGame {
             if (keyCodes.includes('Space')) { player.shoot() }
             if (keyCodes.includes('ArrowLeft')) { player.steer("LEFT") }
             if (keyCodes.includes('ArrowRight')) { player.steer("RIGHT") }
-            if (keyCodes.includes('ArrowUp')) { player.changeThrottle(player.data.maxThrust * .05) } else { player.changeThrottle(-player.data.maxThrust * .1) }
+            if (keyCodes.includes('ArrowUp')) { 
+                player.changeOarSpeed(.1)
+            }
+            if (keyCodes.includes('ArrowDown')) { 
+                player.changeOarSpeed(-.5)
+            }
         }
     }
 

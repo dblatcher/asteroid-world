@@ -26,11 +26,14 @@ class GalleyData implements BodyData {
     shootCooldownDuration?: number
     shootCooldownCurrent?: number
 
-    rudderAngle: number
+    rudderAngle?: number
+    oarSpeed?: number
+    oarPosition?: number
 }
 
 class Galley extends Body {
     data: GalleyData
+    oarSplash: boolean
 
     constructor(config: GalleyData, momentum: Force = null) {
         super(config, momentum);
@@ -40,45 +43,32 @@ class Galley extends Body {
         this.data.maxThrust = config.maxThrust || 100
         this.data.shootCooldownCurrent = 0
         this.data.shootCooldownDuration = config.shootCooldownDuration || 20
+        this.data.rudderAngle = config.rudderAngle || 0
+        this.data.oarSpeed = config.oarSpeed || .25
+        this.data.oarPosition = config.oarPosition || 0
+        this.oarSplash = false
 
         this.data.shape = shapes.polygon
         this.data.corners = [
             { x: 0, y: 1 },
-            { x: .3, y: .5 },
-            { x: .3, y: -.9 },
+            { x: Galley.width, y: .5 },
+            { x: Galley.width, y: -.9 },
             { x: 0, y: -1 },
-            { x: -.3, y: -.9 },
-            { x: -.3, y: .5 },
+            { x: -Galley.width, y: -.9 },
+            { x: -Galley.width, y: .5 },
         ]
     }
+
+    static width = .2
+    static oarPositionPhases = 60
 
     get typeId() { return 'Galley' }
 
     rudderLength = 15
-
+    oarLength = 25
     steerSpeed = .05
-
-    tick() {
-        if (this.data.shootCooldownCurrent > 0) { this.data.shootCooldownCurrent-- }
-        const rotation = this.data.rudderAngle * this.momentum.magnitude / 200
-        this.data.heading += rotation
-    }
-
-    renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort: ViewPort) {
-        Body.prototype.renderOnCanvas.apply(this, [ctx, viewPort])
-
-        const toBack: Vector = new Force(this.data.size, this.data.heading).vector
-        const back: Point = translatePoint(this.shapeValues, toBack, true)
-
-        const toRudderEnd = new Force(this.rudderLength, this.data.heading + this.data.rudderAngle)
-        const rudderEnd: Point = translatePoint(back, toRudderEnd.vector, true)
-
-        renderLine.onCanvas(ctx, [
-            back,
-            rudderEnd,
-        ], { fillColor: 'red', strokeColor: 'red', lineWidth: 8 }, viewPort)
-
-    }
+    oarForceMultiplier = 8000
+    maxOarSpeed = 2
 
     get angleAwayFromHeading(): number {
         const { heading } = this.data
@@ -101,6 +91,69 @@ class Galley extends Body {
         return 1 + (effect * 5)
     }
 
+    get oarsAreAboveWater(): boolean {
+        return this.data.oarPosition > (Galley.oarPositionPhases / 2)
+    }
+
+    get oarForceMagnitude(): number {
+        return this.oarsAreAboveWater ? this.data.oarSpeed * this.oarForceMultiplier : 0;
+    }
+
+
+    tick() {
+        if (this.data.shootCooldownCurrent > 0) { this.data.shootCooldownCurrent-- }
+        const rotation = this.data.rudderAngle * this.momentum.magnitude / 200
+        this.data.heading += rotation
+        this.moveOars()
+    }
+
+    renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort: ViewPort) {
+        Body.prototype.renderOnCanvas.apply(this, [ctx, viewPort])
+
+        const toBack: Vector = new Force(this.data.size, this.data.heading).vector
+        const back: Point = translatePoint(this.shapeValues, toBack, true)
+
+        const toRudderEnd = new Force(this.rudderLength, this.data.heading + this.data.rudderAngle)
+        const rudderEnd: Point = translatePoint(back, toRudderEnd.vector, true)
+
+        renderLine.onCanvas(ctx, [
+            back,
+            rudderEnd,
+        ], { fillColor: 'red', strokeColor: 'red', lineWidth: 8 }, viewPort)
+
+
+        const oarAngle = (Math.abs(this.data.oarPosition - Galley.oarPositionPhases / 2) / (Galley.oarPositionPhases * 12)) - (2 / _deg)
+        this.renderOar(ctx, viewPort, oarAngle, true, .1);
+        this.renderOar(ctx, viewPort, oarAngle, false, .1);
+        this.renderOar(ctx, viewPort, oarAngle, true, -.5);
+        this.renderOar(ctx, viewPort, oarAngle, false, -.5);
+    }
+
+    renderOar(ctx: CanvasRenderingContext2D, viewPort: ViewPort, oarAngle: number, onRight: boolean, forwardFromCenter = 0) {
+
+        const toForward: Vector = new Force(this.data.size * forwardFromCenter, this.data.heading).vector
+        const toSide: Vector = new Force(this.data.size * Galley.width, this.data.heading + _90deg).vector
+        const side: Point = translatePoint(
+            translatePoint(this.shapeValues, toSide, onRight),
+            toForward)
+
+
+        const toOarEnd: Vector = onRight
+            ? new Force(this.oarLength, this.data.heading - (oarAngle / _deg)).vector
+            : new Force(this.oarLength, this.data.heading + (oarAngle / _deg)).vector;
+
+        const oarEnd: Point = translatePoint(side, toOarEnd)
+
+        renderLine.onCanvas(ctx, [
+            side,
+            oarEnd,
+        ], { fillColor: 'red', strokeColor: 'red', lineWidth: 4 }, viewPort)
+
+        if (this.oarSplash) {
+            new ExpandingRing({ ...oarEnd, size: 6, duration: 50, color: 'white' }).enterWorld(this.world)
+        }
+    }
+
     updateMomentum() {
         const { mass, dragMultiplier } = this
         const drag = calculateDragForce(this, Force.combine([this.momentum]));
@@ -110,12 +163,22 @@ class Galley extends Body {
         this.momentum = Force.combine([this.momentum, drag])
         this.otherBodiesCollidedWithThisTick = []
 
-        const { thrust, heading } = this.data
+        const { heading } = this.data
+        const { oarForceMagnitude } = this
 
-        const thrustForce = new Force(thrust / mass, heading)
+        const thrustForce = new Force(oarForceMagnitude / mass, heading)
         this.momentum = Force.combine([this.momentum, thrustForce])
     }
 
+    moveOars() {
+        const startsAboveWater = this.oarsAreAboveWater;
+        this.data.oarPosition += startsAboveWater
+            ? this.data.oarSpeed
+            : this.data.oarSpeed * 3;
+
+        this.oarSplash = startsAboveWater != this.oarsAreAboveWater;
+        this.data.oarPosition = this.data.oarPosition % Galley.oarPositionPhases
+    }
 
     explode(config: {
         driftBiasX?: number
@@ -222,11 +285,11 @@ class Galley extends Body {
         this.data.rudderAngle = Math.min(this.data.rudderAngle, 60 * _deg)
     }
 
-    changeThrottle(change: number) {
-        let newAmount = this.data.thrust + change
+    changeOarSpeed(change: number) {
+        let newAmount = this.data.oarSpeed + change
         if (newAmount < 0) { newAmount = 0 }
-        if (newAmount > this.data.maxThrust) { newAmount = this.data.maxThrust }
-        this.data.thrust = newAmount
+        if (newAmount > this.maxOarSpeed) { newAmount = this.maxOarSpeed}
+        this.data.oarSpeed = newAmount
     }
 
 }
