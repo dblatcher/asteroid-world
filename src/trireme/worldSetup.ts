@@ -1,4 +1,5 @@
 import { World, Force, StarField, BackGround } from '../../../worlds/src/index'
+import { Ocean } from './Ocean';
 import { makeRock, makeShip } from './thingFactories'
 
 
@@ -15,6 +16,7 @@ const gameWorld = new World([
     name: "gameWorld",
     airDensity:.5,
     backGrounds: [
+        new Ocean({color:'blue'})
     ]
 });
 
@@ -22,15 +24,15 @@ const gameWorld = new World([
 const levels = [
     [
         makeRock(100, 100, 5),
-        makeShip(250, 250, 'blue')
+        makeShip(250, 250, 'brown')
     ],
     [
 
-        makeShip(250, 250, 'blue')
+        makeShip(250, 250, 'brown')
     ],
     [
 
-        makeShip(250, 250, 'red')
+        makeShip(250, 250, 'brown')
     ],
 ]
 
