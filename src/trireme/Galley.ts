@@ -60,14 +60,14 @@ class Galley extends Body {
     }
 
     static width = .2
-    static oarPositionPhases = 60
+    static oarPositionPhases = 120
 
     get typeId() { return 'Galley' }
 
     rudderLength = 15
     oarLength = 25
     steerSpeed = .05
-    oarForceMultiplier = 8000
+    oarForceMultiplier = 10000
     maxOarSpeed = 2
 
     get angleAwayFromHeading(): number {
@@ -123,31 +123,35 @@ class Galley extends Body {
 
 
         const oarAngle = (Math.abs(this.data.oarPosition - Galley.oarPositionPhases / 2) / (Galley.oarPositionPhases * 12)) - (2 / _deg)
-        this.renderOar(ctx, viewPort, oarAngle, true, .1);
-        this.renderOar(ctx, viewPort, oarAngle, false, .1);
+        this.renderOar(ctx, viewPort, oarAngle, true, .5);
+        this.renderOar(ctx, viewPort, oarAngle, false, .5);
+        this.renderOar(ctx, viewPort, oarAngle, true,);
+        this.renderOar(ctx, viewPort, oarAngle, false,);
         this.renderOar(ctx, viewPort, oarAngle, true, -.5);
         this.renderOar(ctx, viewPort, oarAngle, false, -.5);
     }
 
     renderOar(ctx: CanvasRenderingContext2D, viewPort: ViewPort, oarAngle: number, onRight: boolean, forwardFromCenter = 0) {
 
+        const { oarLength, shapeValues, oarsAreAboveWater } = this;
+
         const toForward: Vector = new Force(this.data.size * forwardFromCenter, this.data.heading).vector
         const toSide: Vector = new Force(this.data.size * Galley.width, this.data.heading + _90deg).vector
         const side: Point = translatePoint(
-            translatePoint(this.shapeValues, toSide, onRight),
+            translatePoint(shapeValues, toSide, onRight),
             toForward)
 
 
         const toOarEnd: Vector = onRight
-            ? new Force(this.oarLength, this.data.heading - (oarAngle / _deg)).vector
-            : new Force(this.oarLength, this.data.heading + (oarAngle / _deg)).vector;
+            ? new Force(oarLength, this.data.heading - (oarAngle / _deg)).vector
+            : new Force(oarLength, this.data.heading + (oarAngle / _deg)).vector;
 
         const oarEnd: Point = translatePoint(side, toOarEnd)
 
         renderLine.onCanvas(ctx, [
             side,
             oarEnd,
-        ], { fillColor: 'red', strokeColor: 'red', lineWidth: 4 }, viewPort)
+        ], { fillColor: 'red', strokeColor: oarsAreAboveWater ? 'black' : 'gray', lineWidth: 4 }, viewPort)
 
         if (this.oarSplash) {
             new ExpandingRing({ ...oarEnd, size: 6, duration: 50, color: 'white' }).enterWorld(this.world)
@@ -249,6 +253,9 @@ class Galley extends Body {
                 this.explode({ driftBiasX: drift.x, driftBiasY: drift.y })
                 this.world.emitter.emit('shipDeath', this)
                 break;
+            case 'Galley':
+                console.log(report, this.world);
+                break
         }
 
     }
@@ -288,7 +295,7 @@ class Galley extends Body {
     changeOarSpeed(change: number) {
         let newAmount = this.data.oarSpeed + change
         if (newAmount < 0) { newAmount = 0 }
-        if (newAmount > this.maxOarSpeed) { newAmount = this.maxOarSpeed}
+        if (newAmount > this.maxOarSpeed) { newAmount = this.maxOarSpeed }
         this.data.oarSpeed = newAmount
     }
 
