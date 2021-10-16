@@ -1,4 +1,4 @@
-import { SoundPlayer } from "../../../worlds/src/index"
+import { SoundPlayer } from "physics-worlds"
 import { TriremeGame } from './TriremeGame'
 
 import { gameWorld, levels } from './worldSetup'

@@ -1,4 +1,4 @@
-import { World, Body, ViewPort, SoundPlayer, KeyWatcher } from "../../../worlds/src/index"
+import { World, Body, ViewPort, SoundPlayer, KeyWatcher } from "physics-worlds"
 import { SpaceShip } from '../thing-types/SpaceShip';
 import { Rock } from '../thing-types/Rock';
 

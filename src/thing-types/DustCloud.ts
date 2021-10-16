@@ -1,4 +1,4 @@
-import { Effect, EffectData, ViewPort, RenderFunctions, Geometry } from "../_fake-module";
+import { Effect, EffectData, ViewPort, RenderFunctions, Geometry } from "physics-worlds";
 
 class Spec {
     x: number

@@ -1,4 +1,4 @@
-import { Body, Force, BodyData, Shape, Geometry, RenderFunctions, CollisionDetection, ViewPort } from '../../../worlds/src/index'
+import { Body, Force, BodyData, Shape, Geometry, RenderFunctions, CollisionDetection, ViewPort } from 'physics-worlds'
 import { Rock } from './Rock'
 const { renderCircle, renderLine, renderPoint } = RenderFunctions
 

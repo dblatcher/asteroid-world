@@ -1,4 +1,4 @@
-import { Body, Force } from '../../../worlds/src/index'
+import { Body, Force } from 'physics-worlds'
 import { SpaceShip } from '../thing-types/SpaceShip'
 import { Rock } from '../thing-types/Rock'
 

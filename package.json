@@ -20,6 +20,7 @@
     "webpack-merge": "^5.7.3"
   },
   "dependencies": {
+    "physics-worlds": "^1.0.1",
     "tiny-emitter": "^2.1.0"
   }
 }

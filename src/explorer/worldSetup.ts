@@ -1,4 +1,4 @@
-import { World, Force, StarField, Body, Area } from '../../../worlds/src/index'
+import { World, Force, StarField, Body, Area } from 'physics-worlds'
 import { ExplorerShip } from '../thing-types/ExplorerShip';
 import { Planet } from '../thing-types/Planet';
 import { redSwirl, blueGreenBall } from './gradients';

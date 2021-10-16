@@ -1,4 +1,4 @@
-import { World, Body, ViewPort, CameraFollowInstruction, Area, KeyWatcher } from "../../../worlds/src/index"
+import { World, Body, ViewPort, CameraFollowInstruction, Area, KeyWatcher } from "physics-worlds"
 import { ExplorerShip } from '../thing-types/ExplorerShip';
 import { Rock } from '../thing-types/Rock';
 import { RenderTransformationRule } from "../../../worlds/src/ViewPort";

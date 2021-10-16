@@ -1,5 +1,5 @@
 import { } from '../../../worlds/src/Effect'
-import { Body, Force, Geometry, BodyData, RenderFunctions, CollisionDetection, ViewPort, ExpandingRing } from '../_fake-module'
+import { Body, Force, Geometry, BodyData, RenderFunctions, CollisionDetection, ViewPort, ExpandingRing } from 'physics-worlds'
 import { DustCloud } from './DustCloud'
 import { SpaceShip } from './SpaceShip'
 

@@ -1,4 +1,4 @@
-import { Body, Force, BodyData, Shape, Geometry, RenderFunctions, CollisionDetection, ViewPort, ExpandingRing, shapes } from '../_fake-module'
+import { Body, Force, BodyData, Shape, Geometry, RenderFunctions, CollisionDetection, ViewPort, ExpandingRing, shapes } from 'physics-worlds'
 import { Bullet } from '../thing-types/Bullet'
 import { DustCloud } from '../thing-types/DustCloud'
 import { normaliseHeading, Point, Vector, _90deg, _deg } from '../../../worlds/src/geometry'
