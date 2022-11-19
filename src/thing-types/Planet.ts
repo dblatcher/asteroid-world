@@ -1,4 +1,6 @@
-import { AbstractGradientFill, Shape, Body, BodyData } from "../../../worlds/src";
+import { AbstractGradientFill, BodyData, Shape, Body } from "physics-worlds";
+
+
 
 class PlanetData implements BodyData {
     x: number

@@ -14,9 +14,9 @@ const gameWorld = new World([
     bodiesExertGravity: false,
     hasWrappingEdges: true,
     name: "gameWorld",
-    airDensity:.5,
+    airDensity: .5,
     backGrounds: [
-        new Ocean({color:'blue'})
+        new Ocean({ fillColor: 'blue' })
     ]
 });
 

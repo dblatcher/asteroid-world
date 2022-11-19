@@ -1,4 +1,4 @@
-import { BackGround, Effect, EffectData, ViewPort } from "../../../worlds/src";
+import { BackGround, Effect, EffectData, ViewPort } from "physics-worlds";
 import { renderLine, renderPolygon } from "../../../worlds/src/renderFunctions";
 
 
@@ -23,7 +23,7 @@ class Wave extends Effect {
 }
 
 class OceanData {
-    color?: string
+    fillColor?: string
 }
 
 class Ocean extends BackGround {
@@ -31,7 +31,7 @@ class Ocean extends BackGround {
 
     constructor(data: OceanData) {
         super()
-        this.color = data.color || 'blue'
+        this.color = data.fillColor || 'blue'
     }
 
     tick() {
