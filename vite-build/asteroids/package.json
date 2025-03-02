@@ -13,7 +13,7 @@
     "vite": "^6.2.0"
   },
   "dependencies": {
-    "physics-worlds": "^2.3.0",
+    "physics-worlds": "^1.0.3",
     "tiny-emitter": "^2.1.0"
   }
 }

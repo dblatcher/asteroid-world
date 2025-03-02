@@ -19,7 +19,7 @@ const { renderLine } = RenderFunctions
 const {calculateDragForce } = Physics
 const { getVectorX, getVectorY, translatePoint, normaliseHeading, _90deg, _deg } = Geometry
 
-class GalleyData implements BodyData {
+interface GalleyData extends BodyData {
     x: number
     y: number
     heading?: number
