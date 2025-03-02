@@ -1,20 +1,37 @@
 import { SoundPlayer } from 'physics-worlds'
 import { AsteroidsGame } from './AsteroidsGame'
-import rockThud from '../audio/leisure_video_game_retro_8bit_explosion_001.mp3'
-import shipExploding from '../audio/leisure_video_game_retro_8bit_explosion_004.mp3'
-import rockDisintergrating from '../audio/leisure_video_game_retro_8bit_explosion_002.mp3'
-import laser from '../audio/leisure_video_game_retro_laser_gun_fire_001.mp3'
-
 import { gameWorld, levels } from './worldSetup'
+import { sounds } from '../audio'
 
-const sounds = {
-    rockThud,
-    rockDisintergrating,
-    shipExploding,
-    laser
+
+export function addHtmlTemplate() {
+
+    document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
+<main id="gameContainer" class="hidden">
+  <div class="frame">
+    <canvas id="gameCanvas"></canvas>
+  </div>
+
+  <div class="info">
+    <table>
+      <tbody>
+        <tr>
+          <th>level</th><td><span id="level"></td>
+        </tr>
+        <tr>
+          <th>score</th><td><span id="score"></td>
+        </tr>
+        <tr>
+          <th>lives</th><td><span id="lives"></td>
+        </tr>
+      </tbody>
+    </table>
+    <p id="soundToggle">toggle sound</p>  
+  </div>
+  
+</main>
+`
 }
-
-
 
 export function init() {
 

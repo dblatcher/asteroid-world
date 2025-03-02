@@ -1,5 +1,5 @@
-import { BackGround, Effect, EffectData, ViewPort } from "physics-worlds";
-import { renderLine, renderPolygon } from "../../../worlds/src/renderFunctions";
+import { BackGround, Effect, EffectData, ViewPort, RenderFunctions } from "physics-worlds";
+const { renderLine, renderPolygon } = RenderFunctions;
 
 
 class Wave extends Effect {
@@ -9,7 +9,7 @@ class Wave extends Effect {
     }
 
     renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort: ViewPort) {
-        const { x, y, color, size, frame } = this
+        const { x, y, color, size=1, frame } = this
         renderLine.onCanvas(ctx, [
             { x: x - (frame * size / 10), y: y + (frame / 5) },
             { x: x + (frame * size / 10), y: y + (frame / 5) }

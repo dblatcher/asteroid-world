@@ -1,4 +1,3 @@
-import { _deg } from '../../../worlds/src/geometry'
 import { Body, Force } from 'physics-worlds'
 import { Rock } from '../thing-types/Rock'
 import { Galley } from './Galley'

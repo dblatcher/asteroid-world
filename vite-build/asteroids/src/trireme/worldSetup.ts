@@ -1,4 +1,4 @@
-import { World, Force, StarField, BackGround } from 'physics-worlds'
+import { World } from 'physics-worlds'
 import { Ocean } from './Ocean';
 import { makeRock, makeShip } from './thingFactories'
 

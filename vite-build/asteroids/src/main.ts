@@ -1,30 +1,6 @@
 import './style.css'
-import {init} from './asteroids'
+// import { init, addHtmlTemplate } from './asteroids'
+import { init, addHtmlTemplate } from './trireme'
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <main id="gameContainer" class="hidden">
-    <div class="frame">
-      <canvas id="gameCanvas"></canvas>
-    </div>
-
-    <div class="info">
-      <table>
-        <tbody>
-          <tr>
-            <th>level</th><td><span id="level"></td>
-          </tr>
-          <tr>
-            <th>score</th><td><span id="score"></td>
-          </tr>
-          <tr>
-            <th>lives</th><td><span id="lives"></td>
-          </tr>
-        </tbody>
-      </table>
-      <p id="soundToggle">toggle sound</p>  
-    </div>
-    
-  </main>
-`
-
+addHtmlTemplate()
 window.addEventListener('load', init, { once: true });

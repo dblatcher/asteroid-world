@@ -1,11 +1,23 @@
-import { Body, Force, BodyData, Shape, Geometry, RenderFunctions, CollisionDetection, ViewPort, ExpandingRing, shapes } from 'physics-worlds'
+import {
+    Body,
+    BodyData,
+    CollisionDetection,
+    ExpandingRing,
+    Force,
+    Geometry,
+    Physics,
+    RenderFunctions,
+    Shape,
+    shapes,
+    ViewPort
+} from 'physics-worlds'
 import { Bullet } from '../thing-types/Bullet'
 import { DustCloud } from '../thing-types/DustCloud'
-import { normaliseHeading, Point, Vector, _90deg, _deg } from '../../../worlds/src/geometry'
-import { calculateDragForce } from '../../../worlds/src/physics'
-import { renderLine } from '../../../worlds/src/renderFunctions'
 
-const { getVectorX, getVectorY, reverseHeading, getXYVector, translatePoint, _360deg } = Geometry
+
+const { renderLine } = RenderFunctions
+const {calculateDragForce } = Physics
+const { getVectorX, getVectorY, translatePoint, normaliseHeading, _90deg, _deg } = Geometry
 
 class GalleyData implements BodyData {
     x: number
@@ -16,7 +28,7 @@ class GalleyData implements BodyData {
     density?: number
     shape?: Shape
     elasticity?: number
-    corners?: Point[]
+    corners?: Geometry.Point[]
 
     headingFollowsDirection?: false
     fillColor?: string
@@ -35,8 +47,9 @@ class Galley extends Body {
     data: GalleyData
     oarSplash: boolean
 
-    constructor(config: GalleyData, momentum: Force = null) {
+    constructor(config: GalleyData, momentum: Force = new Force(0, 0)) {
         super(config, momentum);
+        this.data= config;
         this.data.color = config.color || 'white'
         this.data.fillColor = config.fillColor || 'white'
         this.data.thrust = config.thrust || 0
