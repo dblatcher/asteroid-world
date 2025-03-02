@@ -2,7 +2,7 @@ import { Body, Force, BodyData, Shape, Geometry, RenderFunctions, CollisionDetec
 import { Bullet } from './Bullet'
 import { DustCloud } from './DustCloud'
 
-const { getVectorX, getVectorY, reverseHeading, getXYVector, translatePoint, _360deg } = Geometry
+const { getVectorX, getVectorY, reverseHeading, getXYVector, translatePoint } = Geometry
 
 class SpaceShipData implements BodyData {
     x: number
@@ -25,8 +25,9 @@ class SpaceShipData implements BodyData {
 
 class SpaceShip extends Body {
     data: SpaceShipData
-    constructor(config: SpaceShipData, momentum: Force = null) {
+    constructor(config: SpaceShipData, momentum: Force = new Force(0,0)) {
         super(config, momentum);
+        this.data = config
         this.data.color = config.color || 'red'
         this.data.fillColor = config.fillColor || 'white'
         this.data.thrust = config.thrust || 0
@@ -38,7 +39,7 @@ class SpaceShip extends Body {
     get typeId() { return 'SpaceShip' }
 
     tick() {
-        if (this.data.shootCooldownCurrent > 0) { this.data.shootCooldownCurrent-- }
+        if (this.data.shootCooldownCurrent! > 0) { this.data.shootCooldownCurrent!-- }
     }
 
     renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort: ViewPort) {
