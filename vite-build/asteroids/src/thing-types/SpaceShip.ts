@@ -4,7 +4,7 @@ import { DustCloud } from './DustCloud'
 
 const { getVectorX, getVectorY, reverseHeading, getXYVector, translatePoint } = Geometry
 
-class SpaceShipData implements BodyData {
+type SpaceShipData = BodyData & {
     x: number
     y: number
     heading?: number

@@ -1,7 +1,6 @@
-import { World, Body, ViewPort, CameraFollowInstruction, Area, KeyWatcher } from "physics-worlds"
+import { Area, Body, CameraFollowInstruction, KeyWatcher, RenderTransformationRule, ViewPort, World } from "physics-worlds";
 import { ExplorerShip } from '../thing-types/ExplorerShip';
 import { Rock } from '../thing-types/Rock';
-import { RenderTransformationRule } from "../../../worlds/src/ViewPort";
 
 
 interface ExplorerGameElements {
@@ -48,7 +47,7 @@ class ExplorerGame {
 
         this.miniMap = miniMapCanvas
             ? ViewPort.fitToSize(world, miniMapCanvas, 150, 200)
-            : null
+            : undefined
 
         this.elements = elements;
 
@@ -145,7 +144,7 @@ class ExplorerGame {
     removeMessageElement() {
         if (!this.elements.message) { return }
         this.elements.main.removeChild(this.elements.message)
-        this.elements.message = null
+        this.elements.message = undefined
     }
 
     resetLevel(level: number) {
@@ -179,13 +178,13 @@ class ExplorerGame {
             if (keyCodes.includes('KeyZ')) { player.blastOff() }
             if (keyCodes.includes('ArrowLeft')) { player.steer("LEFT") }
             if (keyCodes.includes('ArrowRight')) { player.steer("RIGHT") }
-            if (keyCodes.includes('ArrowUp')) { player.changeThrottle(player.data.maxThrust * .02) }
-            if (keyCodes.includes('ArrowDown')) { player.changeThrottle(-player.data.maxThrust * .1) }
+            if (keyCodes.includes('ArrowUp')) { player.changeThrottle(player.data.maxThrust! * .02) }
+            if (keyCodes.includes('ArrowDown')) { player.changeThrottle(-player.data.maxThrust! * .1) }
         }
     }
 
     handleRockHit(rock: Rock) {
-        this.score += Math.max(100, 210 - Math.floor(rock.data.size))
+        this.score += Math.max(100, 210 - Math.floor(rock.data.size!))
         this.updateInfo()
 
         const allRocksGone = this.world.bodies
@@ -216,4 +215,4 @@ class ExplorerGame {
 
 
 
-export { ExplorerGame }
+export { ExplorerGame };

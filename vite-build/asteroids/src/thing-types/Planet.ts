@@ -2,7 +2,7 @@ import { AbstractGradientFill, BodyData, Shape, Body } from "physics-worlds";
 
 
 
-class PlanetData implements BodyData {
+type PlanetData = BodyData & {
     x: number
     y: number
     heading?: number
@@ -17,15 +17,16 @@ class PlanetData implements BodyData {
     renderHeadingIndicator?: boolean
     renderPathAhead?: boolean
 
-    name:string
+    name: string
 }
 
 class Planet extends Body {
     data: PlanetData
-    get typeId(){return 'Planet'}
+    get typeId() { return 'Planet' }
 
-    constructor(planetData:PlanetData) {
+    constructor(planetData: PlanetData) {
         super(planetData)
+        this.data = planetData
 
         this.data.name = planetData.name || '[unknown]'
     }

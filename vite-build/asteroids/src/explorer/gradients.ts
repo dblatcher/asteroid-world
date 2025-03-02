@@ -1,4 +1,4 @@
-import { RadialGradientFill, Geometry } from "../../../worlds/src";
+import { RadialGradientFill, Geometry } from "physics-worlds";
 
 const { getVectorX, getVectorY } = Geometry
 
@@ -31,9 +31,7 @@ const redSwirl = new RadialGradientFill({
 
 const blueGreenBall = new RadialGradientFill({
     fallbackColor: "blue",
-    canvasFunction: (ctx: CanvasRenderingContext2D, circle: Geometry.Circle, heading: number) => {
-
-
+    canvasFunction: (ctx: CanvasRenderingContext2D, circle: Geometry.Circle, _heading: number) => {
         const innerCircle: Geometry.Circle = {
             x: circle.x,
             y: circle.y,

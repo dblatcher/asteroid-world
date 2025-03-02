@@ -1,10 +1,10 @@
-import { CollisionDetection, Force, Physics, RenderFunctions, Body, ViewPort, Geometry } from '../../../worlds/src'
+import { CollisionDetection, Force, Physics, RenderFunctions, Body, ViewPort, Geometry } from 'physics-worlds'
 import { Planet } from './Planet'
 import { SpaceShip, SpaceShipData } from './SpaceShip'
 
-const { getDistanceBetweenPoints, getVectorX, getVectorY, reverseHeading } = Geometry
+const { getDistanceBetweenPoints, getVectorX, getVectorY } = Geometry
 
-class ExplorerShipData extends SpaceShipData {
+type ExplorerShipData = SpaceShipData & {
     isLaunchingFromPlanet?: boolean
     planetThisIsOn?: Planet
     maxImpact?: number
@@ -13,10 +13,11 @@ class ExplorerShipData extends SpaceShipData {
 class ExplorerShip extends SpaceShip {
     data: ExplorerShipData
 
-    constructor(config: ExplorerShipData, force: Force = null) {
+    constructor(config: ExplorerShipData, force: Force = new Force(0, 0)) {
         super(config, force)
+        this.data = config
         this.data.isLaunchingFromPlanet = config.isLaunchingFromPlanet || false
-        this.data.planetThisIsOn = config.planetThisIsOn || null
+        this.data.planetThisIsOn = config.planetThisIsOn || undefined
         this.data.maxImpact = config.maxImpact || 0
     }
 
@@ -47,7 +48,7 @@ class ExplorerShip extends SpaceShip {
         }
     }
 
-    renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort:ViewPort) {
+    renderOnCanvas(ctx: CanvasRenderingContext2D, viewPort: ViewPort) {
         SpaceShip.prototype.renderOnCanvas.apply(this, [ctx, viewPort])
 
         const { x, y, size, heading, isLaunchingFromPlanet } = this.data
@@ -57,8 +58,8 @@ class ExplorerShip extends SpaceShip {
                 x: x - getVectorX(size, heading),
                 y: y - getVectorY(size, heading)
             }
-            let flicker = size * (.5+ (Math.random()*.5) )
-            RenderFunctions.renderCircle.onCanvas(ctx, {x:backPoint.x, y:backPoint.y, radius:flicker}, { strokeColor: 'white', fillColor: 'red' }, viewPort)
+            let flicker = size * (.5 + (Math.random() * .5))
+            RenderFunctions.renderCircle.onCanvas(ctx, { x: backPoint.x, y: backPoint.y, radius: flicker }, { strokeColor: 'white', fillColor: 'red' }, viewPort)
         }
     }
 
@@ -95,7 +96,7 @@ class ExplorerShip extends SpaceShip {
                 console.log('ESCAPE', altitude)
             }
 
-           // console.log(`g: ${gravity.magnitude / mass}N L: ${takeOffForce.magnitude}N : ALT: ${altitude}M`)
+            // console.log(`g: ${gravity.magnitude / mass}N L: ${takeOffForce.magnitude}N : ALT: ${altitude}M`)
 
         } else if (planetThisIsOn) {
             this.momentum = Force.none
