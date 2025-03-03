@@ -8,12 +8,13 @@ const rockColors = ['gainsboro', 'darksalmon', 'dimgray', 'darkgray', 'azure', '
 function makeRock(x: number, y: number, size: number, momentum?: Force): Body {
     const fillColor = rockColors[Math.floor(Math.random() * rockColors.length)]
 
-    return new Rock({ x, y, size, 
-        color: fillColor, 
+    return new Rock({
+        x, y, size,
+        color: fillColor,
         fillColor,
-        elasticity: .5, 
-        density: 5, 
-        headingFollowsDirection:false 
+        elasticity: .5,
+        density: 5,
+        headingFollowsDirection: false
     }, momentum)
 }
 
@@ -24,7 +25,13 @@ function makeShip(x: number, y: number, color: string): SpaceShip {
         size: 10,
         density: 10,
         elasticity: .7,
-        maxThrust: 15000,
+        maxThrust: 3000,
+        thrust: 0,
+
+        heading: 0,
+        fillColor: 'white',
+        shootCooldownDuration: 20,
+        shootCooldownCurrent: 0
     })
 }
 

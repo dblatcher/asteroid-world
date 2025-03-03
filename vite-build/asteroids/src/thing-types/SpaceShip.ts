@@ -1,26 +1,22 @@
-import { Body, Force, BodyData, Shape, Geometry, RenderFunctions, CollisionDetection, ViewPort, ExpandingRing } from 'physics-worlds'
+import { Body, Force, BodyData, Geometry, RenderFunctions, CollisionDetection, ViewPort, ExpandingRing } from 'physics-worlds'
 import { Bullet } from './Bullet'
 import { DustCloud } from './DustCloud'
 
 const { getVectorX, getVectorY, reverseHeading, getXYVector, translatePoint } = Geometry
 
-type SpaceShipData = BodyData & {
-    x: number
-    y: number
-    heading?: number
-    size?: number
-    color?: string
-    density?: number
-    shape?: Shape
-    elasticity?: number
+export type SpaceShipData = BodyData & {
+    heading: number
+    size: number
+    color: string
+    density: number
+    elasticity: number
 
-    headingFollowsDirection?: false
-    fillColor?: string
-    thrust?: number
-    maxThrust?: number
+    fillColor: string
+    thrust: number
+    maxThrust: number
 
-    shootCooldownDuration?: number
-    shootCooldownCurrent?: number
+    shootCooldownDuration: number
+    shootCooldownCurrent: number
 }
 
 class SpaceShip extends Body {
@@ -28,12 +24,12 @@ class SpaceShip extends Body {
     constructor(config: SpaceShipData, momentum: Force = new Force(0,0)) {
         super(config, momentum);
         this.data = config
-        this.data.color = config.color || 'red'
-        this.data.fillColor = config.fillColor || 'white'
-        this.data.thrust = config.thrust || 0
-        this.data.maxThrust = config.maxThrust || 100
-        this.data.shootCooldownCurrent = 0
-        this.data.shootCooldownDuration = config.shootCooldownDuration || 20
+        // this.data.color = config.color || 'red'
+        // this.data.fillColor = config.fillColor || 'white'
+        // this.data.thrust = config.thrust || 0
+        // this.data.maxThrust = config.maxThrust || 100
+        // this.data.shootCooldownCurrent = 0
+        // this.data.shootCooldownDuration = config.shootCooldownDuration || 20
     }
 
     get typeId() { return 'SpaceShip' }
@@ -200,4 +196,4 @@ class SpaceShip extends Body {
 
 }
 
-export { SpaceShip, SpaceShipData }
+export { SpaceShip }
